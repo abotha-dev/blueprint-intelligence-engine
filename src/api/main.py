@@ -757,16 +757,11 @@ async def full_analysis(
                 tier: build_structural_costs_for_tier(tier)["grand_total"]
                 for tier in ["budget", "standard", "premium", "luxury"]
             }
-            exterior_comparisons = {
-                tier: build_exterior_costs_for_tier(tier)["grand_total"]
-                for tier in ["budget", "standard", "premium", "luxury"]
-            }
-
             quality_comparison = QualityComparisonResponse(
-                budget=(comparisons['budget'] * location_multiplier) + structural_comparisons["budget"] + exterior_comparisons["budget"],
-                standard=(comparisons['standard'] * location_multiplier) + structural_comparisons["standard"] + exterior_comparisons["standard"],
-                premium=(comparisons['premium'] * location_multiplier) + structural_comparisons["premium"] + exterior_comparisons["premium"],
-                luxury=(comparisons['luxury'] * location_multiplier) + structural_comparisons["luxury"] + exterior_comparisons["luxury"],
+                budget=(comparisons['budget'] * location_multiplier) + structural_comparisons["budget"],
+                standard=(comparisons['standard'] * location_multiplier) + structural_comparisons["standard"],
+                premium=(comparisons['premium'] * location_multiplier) + structural_comparisons["premium"],
+                luxury=(comparisons['luxury'] * location_multiplier) + structural_comparisons["luxury"],
             )
 
             return FullAnalysisResponse(
