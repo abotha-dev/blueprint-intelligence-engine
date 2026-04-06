@@ -44,8 +44,28 @@ from api.stripe_integration import (
 from api.user_store import user_store
 from api.supabase_store import supabase_store
 from utils.location_pricing import get_cost_multiplier
+try:
+    from pdf2image import convert_from_bytes
+    PDF_SUPPORT = True
+except ImportError:
+    PDF_SUPPORT = False
 
 # Initialize FastAPI app
+def _maybe_convert_pdf(content: bytes, filename: str, content_type: str) -> tuple[bytes, str, str]:
+    """If file is a PDF, convert first page to PNG. Returns (content, suffix, content_type)."""
+    if content_type == "application/pdf" or filename.lower().endswith(".pdf"):
+        if not PDF_SUPPORT:
+            raise HTTPException(status_code=400, detail="PDF support unavailable. Please upload a PNG or JPG.")
+        images = convert_from_bytes(content, first_page=1, last_page=1, dpi=150)
+        if not images:
+            raise HTTPException(status_code=400, detail="Could not read PDF. Please upload a PNG or JPG.")
+        import io
+        buf = io.BytesIO()
+        images[0].save(buf, format="PNG")
+        return buf.getvalue(), ".png", "image/png"
+    return content, os.path.splitext(filename)[1] or ".png", content_type
+
+
 app = FastAPI(
     title="Takeoff.ai API",
     description="AI-powered blueprint parsing and construction cost estimation",
@@ -249,7 +269,7 @@ async def parse_blueprint(file: UploadFile = File(...)):
     Returns: Extracted room data with dimensions
     """
     # Validate file type
-    allowed_types = ["image/png", "image/jpeg", "image/jpg", "image/webp"]
+    allowed_types = ["image/png", "image/jpeg", "image/jpg", "image/webp", "application/pdf"]
     if file.content_type not in allowed_types:
         raise HTTPException(
             status_code=400,
@@ -259,9 +279,13 @@ async def parse_blueprint(file: UploadFile = File(...)):
     try:
         # Read file content
         content = await file.read()
+        file_content_type = file.content_type or ""
+        
+        # Convert PDF to image if needed
+        content, file_suffix, file_content_type = _maybe_convert_pdf(content, file.filename or "", file_content_type)
         
         # Save to temp file for processing
-        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_suffix) as tmp:
             tmp.write(content)
             tmp_path = tmp.name
         
@@ -435,7 +459,7 @@ async def full_analysis(
     Returns: Full analysis with blueprint data, materials, costs, and quality comparison
     """
     # Validate file type
-    allowed_types = ["image/png", "image/jpeg", "image/jpg", "image/webp"]
+    allowed_types = ["image/png", "image/jpeg", "image/jpg", "image/webp", "application/pdf"]
     if file.content_type not in allowed_types:
         raise HTTPException(
             status_code=400,
@@ -445,9 +469,13 @@ async def full_analysis(
     try:
         # Read file content
         content = await file.read()
+        file_content_type = file.content_type or ""
+        
+        # Convert PDF to image if needed
+        content, file_suffix, file_content_type = _maybe_convert_pdf(content, file.filename or "", file_content_type)
         
         # Save to temp file for processing
-        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_suffix) as tmp:
             tmp.write(content)
             tmp_path = tmp.name
         
