@@ -8,6 +8,7 @@ and cost estimation.
 import os
 import sys
 import base64
+import re
 import tempfile
 from typing import Optional, List, Dict, Union
 from datetime import datetime
@@ -28,7 +29,11 @@ from calculator import (
     QualityTier,
     Region,
     LaborAvailability,
-    compare_quality_tiers
+    compare_quality_tiers,
+    StructuralCalculator,
+    calculate_framing_costs,
+    FoundationCalculator,
+    RoofingCalculator,
 )
 from api.pdf_generator import PDFReportGenerator
 from api.stripe_integration import (
@@ -155,6 +160,35 @@ class CostEstimateItem(BaseModel):
     brand_example: str
 
 
+
+class StructuralLineItem(BaseModel):
+    quantity: float
+    unit: str
+    material_cost: float
+    labor_cost: float
+    total_cost: float
+
+
+class StructuralEstimateDetail(BaseModel):
+    line_items: Dict[str, StructuralLineItem]
+    total_material: float
+    total_labor: float
+    grand_total: float
+
+
+class RoofingEstimateDetail(StructuralEstimateDetail):
+    roof_area_sqft: float
+
+
+class StructuralEstimatesResponse(BaseModel):
+    framing: StructuralEstimateDetail
+    foundation: StructuralEstimateDetail
+    roofing: RoofingEstimateDetail
+    subtotal_material: float
+    subtotal_labor: float
+    grand_total: float
+
+
 class ProjectEstimateResponse(BaseModel):
     project_name: str
     timestamp: str
@@ -179,6 +213,7 @@ class FullAnalysisResponse(BaseModel):
     blueprint_analysis: BlueprintAnalysis
     material_totals: Dict[str, MaterialQuantityResponse]
     cost_estimate: ProjectEstimateResponse
+    structural_estimates: StructuralEstimatesResponse
     quality_comparison: QualityComparisonResponse
 
 
@@ -594,19 +629,90 @@ async def full_analysis(
                 notes=estimate.notes
             )
             
-            # Step 4: Quality tier comparison (with location multiplier)
+            # Step 4: Structural estimates (framing, foundation, roofing)
+            def _parse_area_value(area_value: Union[str, int, float]) -> float:
+                if isinstance(area_value, (int, float)):
+                    return float(area_value)
+                numbers = re.findall(r'(\d+[.,]?\d*)', str(area_value))
+                if not numbers:
+                    return 0.0
+                return float(numbers[0].replace(',', '.'))
+
+            total_area_value = _parse_area_value(analysis.total_area)
+            floor_area_sqft = total_area_value * (3.28084 ** 2) if analysis.unit_system == "metric" else total_area_value
+            perimeter_ft = 4 * (floor_area_sqft ** 0.5) * 1.2
+            perimeter_m = perimeter_ft / 3.28084
+            floor_area_m2 = floor_area_sqft / (3.28084 ** 2)
+
+            structural_calc = StructuralCalculator()
+            framing_quantities = structural_calc.calculate_framing(perimeter_m, floor_area_m2)
+
+            foundation_calc = FoundationCalculator()
+            roofing_calc = RoofingCalculator()
+
+            def _apply_multiplier_to_structural(costs: dict, multiplier: float) -> dict:
+                if multiplier == 1.0:
+                    return costs
+                updated = {**costs}
+                line_items = {}
+                for key, item in costs.get("line_items", {}).items():
+                    line_items[key] = {
+                        **item,
+                        "material_cost": round(item.get("material_cost", 0) * multiplier, 2),
+                        "labor_cost": round(item.get("labor_cost", 0) * multiplier, 2),
+                        "total_cost": round(item.get("total_cost", 0) * multiplier, 2),
+                    }
+                updated["line_items"] = line_items
+                updated["total_material"] = round(costs.get("total_material", 0) * multiplier, 2)
+                updated["total_labor"] = round(costs.get("total_labor", 0) * multiplier, 2)
+                updated["grand_total"] = round(costs.get("grand_total", 0) * multiplier, 2)
+                if "roof_area_sqft" in costs:
+                    updated["roof_area_sqft"] = costs["roof_area_sqft"]
+                return updated
+
+            def build_structural_costs_for_tier(tier_value: str) -> dict:
+                framing = calculate_framing_costs(framing_quantities, tier_value)
+                foundation = foundation_calc.calculate(floor_area_sqft, tier_value)
+                roofing = roofing_calc.calculate(floor_area_sqft, tier_value)
+
+                framing = _apply_multiplier_to_structural(framing, location_multiplier)
+                foundation = _apply_multiplier_to_structural(foundation, location_multiplier)
+                roofing = _apply_multiplier_to_structural(roofing, location_multiplier)
+
+                subtotal_material = framing["total_material"] + foundation["total_material"] + roofing["total_material"]
+                subtotal_labor = framing["total_labor"] + foundation["total_labor"] + roofing["total_labor"]
+                grand_total = framing["grand_total"] + foundation["grand_total"] + roofing["grand_total"]
+
+                return {
+                    "framing": framing,
+                    "foundation": foundation,
+                    "roofing": roofing,
+                    "subtotal_material": round(subtotal_material, 2),
+                    "subtotal_labor": round(subtotal_labor, 2),
+                    "grand_total": round(grand_total, 2),
+                }
+
+            structural_totals = build_structural_costs_for_tier(quality_tier.value)
+
+            # Step 5: Quality tier comparison (with location multiplier + structural)
             comparisons = compare_quality_tiers(totals, reg, include_labor, contingency_percent, labor_avail)
+            structural_comparisons = {
+                tier: build_structural_costs_for_tier(tier)["grand_total"]
+                for tier in ["budget", "standard", "premium", "luxury"]
+            }
+
             quality_comparison = QualityComparisonResponse(
-                budget=comparisons['budget'] * location_multiplier,
-                standard=comparisons['standard'] * location_multiplier,
-                premium=comparisons['premium'] * location_multiplier,
-                luxury=comparisons['luxury'] * location_multiplier
+                budget=(comparisons['budget'] * location_multiplier) + structural_comparisons["budget"],
+                standard=(comparisons['standard'] * location_multiplier) + structural_comparisons["standard"],
+                premium=(comparisons['premium'] * location_multiplier) + structural_comparisons["premium"],
+                luxury=(comparisons['luxury'] * location_multiplier) + structural_comparisons["luxury"],
             )
-            
+
             return FullAnalysisResponse(
                 blueprint_analysis=blueprint_analysis,
                 material_totals=material_response,
                 cost_estimate=cost_estimate,
+                structural_estimates=structural_totals,
                 quality_comparison=quality_comparison
             )
             

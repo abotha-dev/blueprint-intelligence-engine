@@ -151,3 +151,78 @@ class StructuralCalculator:
         }
 
         return {key: mq.to_dict() for key, mq in results.items()}
+
+
+# ------------------------------------------------------------------
+# Framing cost estimator
+# ------------------------------------------------------------------
+
+FRAMING_UNIT_COSTS = {
+    "stud": {"material": 4.50, "labor": 2.50},
+    "plate": {"material": 4.00, "labor": 1.50},
+    "header": {"material": 6.00, "labor": 3.00},
+}
+
+QUALITY_TIER_MULTIPLIERS = {
+    "budget": 0.85,
+    "standard": 1.0,
+    "premium": 1.25,
+    "luxury": 1.60,
+}
+
+
+def calculate_framing_costs(framing_quantities: Dict[str, Dict], quality_tier: str = "standard") -> Dict:
+    """
+    Calculate framing costs from StructuralCalculator quantities.
+
+    Returns line items for studs, plates, and headers plus totals.
+    """
+    tier_multiplier = QUALITY_TIER_MULTIPLIERS.get(quality_tier, 1.0)
+
+    exterior_studs = framing_quantities.get("exterior_studs", {}).get("quantity_imperial", 0)
+    interior_studs = framing_quantities.get("interior_partition_studs", {}).get("quantity_imperial", 0)
+    total_studs = exterior_studs + interior_studs
+
+    plate_boards = framing_quantities.get("top_bottom_plates_boards", {}).get("quantity_imperial", 0)
+    header_lf = framing_quantities.get("header_stock_lf", {}).get("quantity_imperial", 0)
+
+    studs_material = total_studs * FRAMING_UNIT_COSTS["stud"]["material"] * tier_multiplier
+    studs_labor = total_studs * FRAMING_UNIT_COSTS["stud"]["labor"] * tier_multiplier
+
+    plates_material = plate_boards * FRAMING_UNIT_COSTS["plate"]["material"] * tier_multiplier
+    plates_labor = plate_boards * FRAMING_UNIT_COSTS["plate"]["labor"] * tier_multiplier
+
+    headers_material = header_lf * FRAMING_UNIT_COSTS["header"]["material"] * tier_multiplier
+    headers_labor = header_lf * FRAMING_UNIT_COSTS["header"]["labor"] * tier_multiplier
+
+    total_material = studs_material + plates_material + headers_material
+    total_labor = studs_labor + plates_labor + headers_labor
+
+    return {
+        "line_items": {
+            "studs": {
+                "quantity": round(total_studs, 2),
+                "unit": "studs",
+                "material_cost": round(studs_material, 2),
+                "labor_cost": round(studs_labor, 2),
+                "total_cost": round(studs_material + studs_labor, 2),
+            },
+            "plates": {
+                "quantity": round(plate_boards, 2),
+                "unit": "8-ft boards",
+                "material_cost": round(plates_material, 2),
+                "labor_cost": round(plates_labor, 2),
+                "total_cost": round(plates_material + plates_labor, 2),
+            },
+            "headers": {
+                "quantity": round(header_lf, 2),
+                "unit": "linear ft",
+                "material_cost": round(headers_material, 2),
+                "labor_cost": round(headers_labor, 2),
+                "total_cost": round(headers_material + headers_labor, 2),
+            },
+        },
+        "total_material": round(total_material, 2),
+        "total_labor": round(total_labor, 2),
+        "grand_total": round(total_material + total_labor, 2),
+    }
