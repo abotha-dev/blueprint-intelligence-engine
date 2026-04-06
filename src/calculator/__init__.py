@@ -4,3 +4,5 @@ from .cost_estimator import CostEstimator, PricingDatabase, QualityTier, Region,
 
 from .foundation_calculator import FoundationCalculator
 from .roofing_calculator import RoofingCalculator
+
+from .exterior_calculator import ExteriorCalculator

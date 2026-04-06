@@ -34,6 +34,7 @@ from calculator import (
     calculate_framing_costs,
     FoundationCalculator,
     RoofingCalculator,
+    ExteriorCalculator,
 )
 from api.pdf_generator import PDFReportGenerator
 from api.stripe_integration import (
@@ -189,6 +190,25 @@ class StructuralEstimatesResponse(BaseModel):
     grand_total: float
 
 
+class ExteriorLineItem(BaseModel):
+    quantity: float
+    unit: str
+    material_cost: float
+    labor_cost: float
+    total_cost: float
+
+
+class ExteriorEstimatesResponse(BaseModel):
+    window_count: int
+    exterior_door_count: int
+    interior_door_count: int
+    wall_area_sqft: float
+    line_items: Dict[str, ExteriorLineItem]
+    total_material: float
+    total_labor: float
+    grand_total: float
+
+
 class ProjectEstimateResponse(BaseModel):
     project_name: str
     timestamp: str
@@ -214,6 +234,7 @@ class FullAnalysisResponse(BaseModel):
     material_totals: Dict[str, MaterialQuantityResponse]
     cost_estimate: ProjectEstimateResponse
     structural_estimates: StructuralEstimatesResponse
+    exterior_estimates: ExteriorEstimatesResponse
     quality_comparison: QualityComparisonResponse
 
 
@@ -696,18 +717,56 @@ async def full_analysis(
 
             structural_totals = build_structural_costs_for_tier(quality_tier.value)
 
-            # Step 5: Quality tier comparison (with location multiplier + structural)
+            # Step 5: Exterior finishes (windows, doors, siding, trim)
+            exterior_calc = ExteriorCalculator()
+            rooms_list = [{"name": r.name, "area": _parse_area_value(r.area)} for r in rooms]
+
+            def _apply_multiplier_to_exterior(costs: dict, multiplier: float) -> dict:
+                if multiplier == 1.0:
+                    return costs
+                updated = {**costs}
+                line_items = {}
+                for key, item in costs.get("line_items", {}).items():
+                    line_items[key] = {
+                        **item,
+                        "material_cost": round(item.get("material_cost", 0) * multiplier, 2),
+                        "labor_cost": round(item.get("labor_cost", 0) * multiplier, 2),
+                        "total_cost": round(item.get("total_cost", 0) * multiplier, 2),
+                    }
+                updated["line_items"] = line_items
+                updated["total_material"] = round(costs.get("total_material", 0) * multiplier, 2)
+                updated["total_labor"] = round(costs.get("total_labor", 0) * multiplier, 2)
+                updated["grand_total"] = round(costs.get("grand_total", 0) * multiplier, 2)
+                return updated
+
+            def build_exterior_costs_for_tier(tier_value: str) -> dict:
+                base = exterior_calc.calculate(
+                    floor_area_sqft=floor_area_sqft,
+                    perimeter_ft=perimeter_ft,
+                    rooms=rooms_list,
+                    quality_tier=tier_value,
+                    ceiling_height_ft=9.0,
+                )
+                return _apply_multiplier_to_exterior(base, location_multiplier)
+
+            exterior_totals = build_exterior_costs_for_tier(quality_tier.value)
+
+            # Step 6: Quality tier comparison (with location multiplier + structural + exterior)
             comparisons = compare_quality_tiers(totals, reg, include_labor, contingency_percent, labor_avail)
             structural_comparisons = {
                 tier: build_structural_costs_for_tier(tier)["grand_total"]
                 for tier in ["budget", "standard", "premium", "luxury"]
             }
+            exterior_comparisons = {
+                tier: build_exterior_costs_for_tier(tier)["grand_total"]
+                for tier in ["budget", "standard", "premium", "luxury"]
+            }
 
             quality_comparison = QualityComparisonResponse(
-                budget=(comparisons['budget'] * location_multiplier) + structural_comparisons["budget"],
-                standard=(comparisons['standard'] * location_multiplier) + structural_comparisons["standard"],
-                premium=(comparisons['premium'] * location_multiplier) + structural_comparisons["premium"],
-                luxury=(comparisons['luxury'] * location_multiplier) + structural_comparisons["luxury"],
+                budget=(comparisons['budget'] * location_multiplier) + structural_comparisons["budget"] + exterior_comparisons["budget"],
+                standard=(comparisons['standard'] * location_multiplier) + structural_comparisons["standard"] + exterior_comparisons["standard"],
+                premium=(comparisons['premium'] * location_multiplier) + structural_comparisons["premium"] + exterior_comparisons["premium"],
+                luxury=(comparisons['luxury'] * location_multiplier) + structural_comparisons["luxury"] + exterior_comparisons["luxury"],
             )
 
             return FullAnalysisResponse(
@@ -715,6 +774,7 @@ async def full_analysis(
                 material_totals=material_response,
                 cost_estimate=cost_estimate,
                 structural_estimates=structural_totals,
+                exterior_estimates=exterior_totals,
                 quality_comparison=quality_comparison
             )
             
