@@ -646,6 +646,8 @@ async def full_analysis(
 
             structural_calc = StructuralCalculator()
             framing_quantities = structural_calc.calculate_framing(perimeter_m, floor_area_m2)
+            # Inject floor area so framing cost function can calculate horizontal framing
+            framing_quantities["_floor_area_sqft"] = floor_area_sqft
 
             foundation_calc = FoundationCalculator()
             roofing_calc = RoofingCalculator()

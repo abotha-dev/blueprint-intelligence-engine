@@ -175,7 +175,12 @@ def calculate_framing_costs(framing_quantities: Dict[str, Dict], quality_tier: s
     """
     Calculate framing costs from StructuralCalculator quantities.
 
-    Returns line items for studs, plates, and headers plus totals.
+    Includes wall studs/plates/headers PLUS floor joists, ceiling joists,
+    roof trusses/rafters, rim boards, and blocking — the full framing package.
+
+    Source: NAHB 2024 — framing = 17.4% of $162/sqft = ~$28.19/sqft total framing cost.
+    Cross-checked: industry average $15-25/sqft for framing labor+material.
+    Target: $18-22/sqft for standard tier.
     """
     tier_multiplier = QUALITY_TIER_MULTIPLIERS.get(quality_tier, 1.0)
 
@@ -186,40 +191,63 @@ def calculate_framing_costs(framing_quantities: Dict[str, Dict], quality_tier: s
     plate_boards = framing_quantities.get("top_bottom_plates_boards", {}).get("quantity_imperial", 0)
     header_lf = framing_quantities.get("header_stock_lf", {}).get("quantity_imperial", 0)
 
+    # Wall studs + plates + headers (from structural calculator)
     studs_material = total_studs * FRAMING_UNIT_COSTS["stud"]["material"] * tier_multiplier
     studs_labor = total_studs * FRAMING_UNIT_COSTS["stud"]["labor"] * tier_multiplier
-
     plates_material = plate_boards * FRAMING_UNIT_COSTS["plate"]["material"] * tier_multiplier
     plates_labor = plate_boards * FRAMING_UNIT_COSTS["plate"]["labor"] * tier_multiplier
-
     headers_material = header_lf * FRAMING_UNIT_COSTS["header"]["material"] * tier_multiplier
     headers_labor = header_lf * FRAMING_UNIT_COSTS["header"]["labor"] * tier_multiplier
 
-    total_material = studs_material + plates_material + headers_material
-    total_labor = studs_labor + plates_labor + headers_labor
+    wall_material = studs_material + plates_material + headers_material
+    wall_labor = studs_labor + plates_labor + headers_labor
+
+    # Floor joists, ceiling joists, roof trusses, rim boards, blocking
+    # These are estimated from floor area using NAHB-derived sqft rates
+    # Standard tier: floor joists ~$4.50/sqft, ceiling/roof ~$5.00/sqft, misc ~$2.50/sqft
+    # Labor: ~$6.00/sqft for all horizontal framing
+    floor_area_sqft = framing_quantities.get("_floor_area_sqft", 0)
+    if floor_area_sqft > 0:
+        horizontal_material_rate = {"budget": 9.50, "standard": 12.00, "premium": 15.00, "luxury": 19.00}.get(quality_tier, 12.00)
+        horizontal_labor_rate = {"budget": 4.50, "standard": 6.00, "premium": 7.50, "luxury": 9.50}.get(quality_tier, 6.00)
+        horizontal_material = floor_area_sqft * horizontal_material_rate
+        horizontal_labor = floor_area_sqft * horizontal_labor_rate
+    else:
+        horizontal_material = wall_material * 2.5  # fallback ratio if area not available
+        horizontal_labor = wall_labor * 2.5
+
+    total_material = wall_material + horizontal_material
+    total_labor = wall_labor + horizontal_labor
 
     return {
         "line_items": {
-            "studs": {
+            "wall_studs_plates_headers": {
                 "quantity": round(total_studs, 2),
-                "unit": "studs",
-                "material_cost": round(studs_material, 2),
-                "labor_cost": round(studs_labor, 2),
-                "total_cost": round(studs_material + studs_labor, 2),
+                "unit": "studs + plates",
+                "material_cost": round(wall_material, 2),
+                "labor_cost": round(wall_labor, 2),
+                "total_cost": round(wall_material + wall_labor, 2),
             },
-            "plates": {
-                "quantity": round(plate_boards, 2),
-                "unit": "8-ft boards",
-                "material_cost": round(plates_material, 2),
-                "labor_cost": round(plates_labor, 2),
-                "total_cost": round(plates_material + plates_labor, 2),
+            "floor_joists_rim_boards": {
+                "quantity": round(floor_area_sqft if floor_area_sqft > 0 else 0, 2),
+                "unit": "sqft",
+                "material_cost": round(horizontal_material * 0.45, 2),
+                "labor_cost": round(horizontal_labor * 0.45, 2),
+                "total_cost": round((horizontal_material + horizontal_labor) * 0.45, 2),
             },
-            "headers": {
-                "quantity": round(header_lf, 2),
-                "unit": "linear ft",
-                "material_cost": round(headers_material, 2),
-                "labor_cost": round(headers_labor, 2),
-                "total_cost": round(headers_material + headers_labor, 2),
+            "ceiling_joists_blocking": {
+                "quantity": round(floor_area_sqft if floor_area_sqft > 0 else 0, 2),
+                "unit": "sqft",
+                "material_cost": round(horizontal_material * 0.20, 2),
+                "labor_cost": round(horizontal_labor * 0.20, 2),
+                "total_cost": round((horizontal_material + horizontal_labor) * 0.20, 2),
+            },
+            "roof_trusses_rafters": {
+                "quantity": round(floor_area_sqft if floor_area_sqft > 0 else 0, 2),
+                "unit": "sqft",
+                "material_cost": round(horizontal_material * 0.35, 2),
+                "labor_cost": round(horizontal_labor * 0.35, 2),
+                "total_cost": round((horizontal_material + horizontal_labor) * 0.35, 2),
             },
         },
         "total_material": round(total_material, 2),
