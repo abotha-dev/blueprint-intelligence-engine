@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800">
+  <defs>
+    <style>
+      .room-label { font-family: Arial, sans-serif; font-weight: 500; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1000" height="800" fill="#ffffff" />
+  
+  <!-- Footprint (boundary) -->
+  <path d="M 62.86 740.00 L 937.14 740.00 L 937.14 60.00 L 645.71 60.00 L 645.71 497.14 L 354.29 497.14 L 354.29 60.00 L 62.86 60.00 Z" fill="none" stroke="#7f8c8d" stroke-width="2" stroke-dasharray="8,4" />
+  
+  <!-- Rooms -->
+  <path d="M 354.29 740.00 L 645.71 740.00 L 645.71 516.57 L 354.29 516.57 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+    <path d="M 645.71 740.00 L 937.14 740.00 L 937.14 497.14 L 645.71 497.14 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+    <path d="M 62.86 740.00 L 354.29 740.00 L 354.29 519.00 L 62.86 519.00 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+    <path d="M 257.14 519.00 L 354.29 519.00 L 354.29 60.00 L 257.14 60.00 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+    <path d="M 62.86 519.00 L 257.14 519.00 L 257.14 310.14 L 62.86 310.14 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+    <path d="M 62.86 310.14 L 257.14 310.14 L 257.14 60.00 L 62.86 60.00 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+    <path d="M 645.71 497.14 L 937.14 497.14 L 937.14 162.00 L 645.71 162.00 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+    <path d="M 645.71 162.00 L 937.14 162.00 L 937.14 60.00 L 645.71 60.00 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+  
+  <!-- Courtyards -->
+  
+  
+  <!-- Walls -->
+  <line x1="645.71" y1="740.00" x2="645.71" y2="516.57" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="354.29" y1="740.00" x2="354.29" y2="519.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="354.29" y1="519.00" x2="354.29" y2="516.57" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="645.71" y1="497.14" x2="937.14" y2="497.14" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="257.14" y1="519.00" x2="354.29" y2="519.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="62.86" y1="519.00" x2="257.14" y2="519.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="257.14" y1="519.00" x2="257.14" y2="310.14" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="257.14" y1="310.14" x2="257.14" y2="60.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="62.86" y1="310.14" x2="257.14" y2="310.14" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="645.71" y1="162.00" x2="937.14" y2="162.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="354.29" y1="740.00" x2="645.71" y2="740.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="354.29" y1="516.57" x2="645.71" y2="516.57" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="645.71" y1="740.00" x2="937.14" y2="740.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="937.14" y1="740.00" x2="937.14" y2="497.14" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="645.71" y1="516.57" x2="645.71" y2="497.14" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="62.86" y1="740.00" x2="354.29" y2="740.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="62.86" y1="740.00" x2="62.86" y2="519.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="354.29" y1="516.57" x2="354.29" y2="60.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="257.14" y1="60.00" x2="354.29" y2="60.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="62.86" y1="519.00" x2="62.86" y2="310.14" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="62.86" y1="60.00" x2="257.14" y2="60.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="62.86" y1="310.14" x2="62.86" y2="60.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="937.14" y1="497.14" x2="937.14" y2="162.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="645.71" y1="497.14" x2="645.71" y2="162.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="937.14" y1="162.00" x2="937.14" y2="60.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="645.71" y1="60.00" x2="937.14" y2="60.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="645.71" y1="162.00" x2="645.71" y2="60.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+  
+  <!-- Openings (doors/windows) -->
+  <line x1="645.71" y1="650.14" x2="645.71" y2="606.43" stroke="#e74c3c" stroke-width="4" stroke-linecap="round" />
+    <line x1="354.29" y1="651.36" x2="354.29" y2="607.64" stroke="#e74c3c" stroke-width="4" stroke-linecap="round" />
+    <line x1="769.57" y1="497.14" x2="813.29" y2="497.14" stroke="#e74c3c" stroke-width="4" stroke-linecap="round" />
+    <line x1="283.86" y1="519.00" x2="327.57" y2="519.00" stroke="#e74c3c" stroke-width="4" stroke-linecap="round" />
+    <line x1="257.14" y1="206.93" x2="257.14" y2="163.21" stroke="#e74c3c" stroke-width="4" stroke-linecap="round" />
+    <line x1="257.14" y1="436.43" x2="257.14" y2="392.71" stroke="#e74c3c" stroke-width="4" stroke-linecap="round" />
+    <line x1="769.57" y1="162.00" x2="813.29" y2="162.00" stroke="#e74c3c" stroke-width="4" stroke-linecap="round" />
+    <line x1="473.29" y1="740.00" x2="526.71" y2="740.00" stroke="#e74c3c" stroke-width="4" stroke-linecap="round" />
+    <line x1="755.00" y1="740.00" x2="827.86" y2="740.00" stroke="#3498db" stroke-width="3" stroke-linecap="round" />
+    <line x1="62.86" y1="432.79" x2="62.86" y2="396.36" stroke="#3498db" stroke-width="3" stroke-linecap="round" />
+    <line x1="937.14" y1="366.00" x2="937.14" y2="293.14" stroke="#3498db" stroke-width="3" stroke-linecap="round" />
+    <line x1="62.86" y1="221.50" x2="62.86" y2="148.64" stroke="#3498db" stroke-width="3" stroke-linecap="round" />
+  
+  <!-- Labels -->
+  <text x="500.00" y="628.29" font-size="14" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Entry Foyer</text>
+    <text x="791.43" y="618.57" font-size="14" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Living Room</text>
+    <text x="208.57" y="629.50" font-size="14" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Kitchen</text>
+    <text x="305.71" y="289.50" font-size="14" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">West Hall</text>
+    <text x="160.00" y="414.57" font-size="14" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Shared Bathroom</text>
+    <text x="160.00" y="185.07" font-size="14" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Bedroom 2</text>
+    <text x="791.43" y="329.57" font-size="14" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Master Bedroom</text>
+    <text x="791.43" y="111.00" font-size="14" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Master Ensuite</text>
+  
+  <!-- Dimensions -->
+  
+  
+  <!-- Compass / Orientation -->
+  
+</svg>

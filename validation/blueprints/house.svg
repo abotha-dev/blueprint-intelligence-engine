@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800">
+  <defs>
+    <style>
+      .room-label { font-family: Arial, sans-serif; font-weight: 500; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1000" height="800" fill="#ffffff" />
+  
+  <!-- Footprint (boundary) -->
+  <path d="M 346.67 630.00 L 653.33 630.00 L 653.33 170.00 L 346.67 170.00 Z" fill="none" stroke="#7f8c8d" stroke-width="2" stroke-dasharray="8,4" />
+  
+  <!-- Rooms -->
+  <path d="M 362.00 614.67 L 484.67 614.67 L 484.67 522.67 L 362.00 522.67 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+    <path d="M 484.67 614.67 L 546.00 614.67 L 546.00 522.67 L 484.67 522.67 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+    <path d="M 362.00 522.67 L 546.00 522.67 L 546.00 492.00 L 362.00 492.00 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+    <path d="M 362.00 492.00 L 417.20 492.00 L 417.20 430.67 L 362.00 430.67 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+    <path d="M 417.20 464.40 L 457.07 464.40 L 457.07 430.67 L 417.20 430.67 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" />
+  
+  <!-- Walls -->
+  <line x1="484.67" y1="614.67" x2="484.67" y2="522.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="362.00" y1="522.67" x2="484.67" y2="522.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="484.67" y1="522.67" x2="546.00" y2="522.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="362.00" y1="492.00" x2="417.20" y2="492.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="417.20" y1="464.40" x2="417.20" y2="430.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="362.00" y1="614.67" x2="484.67" y2="614.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="362.00" y1="614.67" x2="362.00" y2="522.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="484.67" y1="614.67" x2="546.00" y2="614.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="546.00" y1="614.67" x2="546.00" y2="522.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="546.00" y1="522.67" x2="546.00" y2="492.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="417.20" y1="492.00" x2="546.00" y2="492.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="362.00" y1="522.67" x2="362.00" y2="492.00" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="417.20" y1="492.00" x2="417.20" y2="464.40" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="362.00" y1="430.67" x2="417.20" y2="430.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="362.00" y1="492.00" x2="362.00" y2="430.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="417.20" y1="464.40" x2="457.07" y2="464.40" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="457.07" y1="464.40" x2="457.07" y2="430.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+    <line x1="417.20" y1="430.67" x2="457.07" y2="430.67" stroke="#2c3e50" stroke-width="3" stroke-linecap="round" />
+  
+  <!-- Openings (doors/windows) -->
+  <line x1="428.70" y1="522.67" x2="442.50" y2="522.67" stroke="#e74c3c" stroke-width="4" stroke-linecap="round" />
+    <line x1="484.67" y1="575.57" x2="484.67" y2="561.77" stroke="#e74c3c" stroke-width="4" stroke-linecap="round" />
+    <line x1="382.70" y1="492.00" x2="396.50" y2="492.00" stroke="#e74c3c" stroke-width="4" stroke-linecap="round" />
+    <line x1="374.27" y1="614.67" x2="411.07" y2="614.67" stroke="#3498db" stroke-width="3" stroke-linecap="round" />
+  
+  <!-- Labels -->
+  <text x="423.33" y="568.67" font-size="14" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Living Room</text>
+    <text x="515.33" y="568.67" font-size="12" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Kitchen</text>
+    <text x="454.00" y="507.33" font-size="12.266666666666667" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Hallway</text>
+    <text x="389.60" y="461.33" font-size="6" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Master Bedroom</text>
+    <text x="437.13" y="447.53" font-size="7" fill="#2c3e50" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">Bathroom</text>
+  
+  <!-- Dimensions -->
+  <line x1="362.00" y1="634.67" x2="484.67" y2="634.67" stroke="#666666" stroke-width="1" />
+    <line x1="362.00" y1="628.67" x2="362.00" y2="640.67" stroke="#666666" stroke-width="1" />
+    <line x1="484.67" y1="628.67" x2="484.67" y2="640.67" stroke="#666666" stroke-width="1" />
+    <rect x="415.33" y="628.67" width="16.00" height="12.00" fill="#ffffff" />
+    <text x="423.33" y="634.67" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">8m</text>
+    <line x1="484.67" y1="634.67" x2="546.00" y2="634.67" stroke="#666666" stroke-width="1" />
+    <line x1="484.67" y1="628.67" x2="484.67" y2="640.67" stroke="#666666" stroke-width="1" />
+    <line x1="546.00" y1="628.67" x2="546.00" y2="640.67" stroke="#666666" stroke-width="1" />
+    <rect x="507.33" y="628.67" width="16.00" height="12.00" fill="#ffffff" />
+    <text x="515.33" y="634.67" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">4m</text>
+    <line x1="342.00" y1="614.67" x2="342.00" y2="522.67" stroke="#666666" stroke-width="1" />
+    <line x1="348.00" y1="614.67" x2="336.00" y2="614.67" stroke="#666666" stroke-width="1" />
+    <line x1="348.00" y1="522.67" x2="336.00" y2="522.67" stroke="#666666" stroke-width="1" />
+    <rect x="334.00" y="562.67" width="16.00" height="12.00" fill="#ffffff" transform="rotate(-90, 342.00, 568.67)" />
+    <text x="342.00" y="568.67" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" transform="rotate(-90, 342.00, 568.67)">6m</text>
+    <line x1="342.00" y1="522.67" x2="342.00" y2="492.00" stroke="#666666" stroke-width="1" />
+    <line x1="348.00" y1="522.67" x2="336.00" y2="522.67" stroke="#666666" stroke-width="1" />
+    <line x1="348.00" y1="492.00" x2="336.00" y2="492.00" stroke="#666666" stroke-width="1" />
+    <rect x="334.00" y="501.33" width="16.00" height="12.00" fill="#ffffff" transform="rotate(-90, 342.00, 507.33)" />
+    <text x="342.00" y="507.33" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" transform="rotate(-90, 342.00, 507.33)">2m</text>
+    <line x1="342.00" y1="492.00" x2="342.00" y2="430.67" stroke="#666666" stroke-width="1" />
+    <line x1="348.00" y1="492.00" x2="336.00" y2="492.00" stroke="#666666" stroke-width="1" />
+    <line x1="348.00" y1="430.67" x2="336.00" y2="430.67" stroke="#666666" stroke-width="1" />
+    <rect x="334.00" y="455.33" width="16.00" height="12.00" fill="#ffffff" transform="rotate(-90, 342.00, 461.33)" />
+    <text x="342.00" y="461.33" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" transform="rotate(-90, 342.00, 461.33)">4m</text>
+    <line x1="362.00" y1="410.67" x2="417.20" y2="410.67" stroke="#666666" stroke-width="1" />
+    <line x1="362.00" y1="416.67" x2="362.00" y2="404.67" stroke="#666666" stroke-width="1" />
+    <line x1="417.20" y1="416.67" x2="417.20" y2="404.67" stroke="#666666" stroke-width="1" />
+    <rect x="375.60" y="404.67" width="28.00" height="12.00" fill="#ffffff" />
+    <text x="389.60" y="410.67" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">3.6m</text>
+    <line x1="417.20" y1="410.67" x2="457.07" y2="410.67" stroke="#666666" stroke-width="1" />
+    <line x1="417.20" y1="416.67" x2="417.20" y2="404.67" stroke="#666666" stroke-width="1" />
+    <line x1="457.07" y1="416.67" x2="457.07" y2="404.67" stroke="#666666" stroke-width="1" />
+    <rect x="423.13" y="404.67" width="28.00" height="12.00" fill="#ffffff" />
+    <text x="437.13" y="410.67" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">2.6m</text>
+    <line x1="477.07" y1="464.40" x2="477.07" y2="430.67" stroke="#666666" stroke-width="1" />
+    <line x1="471.07" y1="464.40" x2="483.07" y2="464.40" stroke="#666666" stroke-width="1" />
+    <line x1="471.07" y1="430.67" x2="483.07" y2="430.67" stroke="#666666" stroke-width="1" />
+    <rect x="463.07" y="441.53" width="28.00" height="12.00" fill="#ffffff" transform="rotate(-90, 477.07, 447.53)" />
+    <text x="477.07" y="447.53" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" transform="rotate(-90, 477.07, 447.53)">2.2m</text>
+    <line x1="346.67" y1="680.00" x2="653.33" y2="680.00" stroke="#666666" stroke-width="1" />
+    <line x1="346.67" y1="674.00" x2="346.67" y2="686.00" stroke="#666666" stroke-width="1" />
+    <line x1="653.33" y1="674.00" x2="653.33" y2="686.00" stroke="#666666" stroke-width="1" />
+    <rect x="489.00" y="674.00" width="22.00" height="12.00" fill="#ffffff" />
+    <text x="500.00" y="680.00" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">20m</text>
+    <line x1="296.67" y1="630.00" x2="296.67" y2="170.00" stroke="#666666" stroke-width="1" />
+    <line x1="302.67" y1="630.00" x2="290.67" y2="630.00" stroke="#666666" stroke-width="1" />
+    <line x1="302.67" y1="170.00" x2="290.67" y2="170.00" stroke="#666666" stroke-width="1" />
+    <rect x="285.67" y="394.00" width="22.00" height="12.00" fill="#ffffff" transform="rotate(-90, 296.67, 400.00)" />
+    <text x="296.67" y="400.00" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" transform="rotate(-90, 296.67, 400.00)">30m</text>
+</svg>

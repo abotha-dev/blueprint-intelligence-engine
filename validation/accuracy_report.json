@@ -1,0 +1,359 @@
+{
+  "aggregate": {
+    "blueprints_tested": 6,
+    "avg_detection_rate_pct": 81.5,
+    "avg_area_accuracy_pct": 90.9,
+    "confidence_distribution": {
+      "low": 6,
+      "high": 19,
+      "medium": 6
+    }
+  },
+  "per_blueprint": [
+    {
+      "blueprint": "corridor-house.png",
+      "mode": "mock",
+      "detection_rate_pct": 83.3,
+      "matched": 5,
+      "total_gt": 6,
+      "avg_area_error_pct": 11.2,
+      "avg_area_accuracy_pct": 88.8,
+      "confidence_dist": {
+        "low": 2,
+        "high": 3
+      },
+      "matched_rooms": [
+        {
+          "name": "Hallway",
+          "gt_sqft": 193.8,
+          "parsed_sqft": 165.4,
+          "err_pct": 14.7,
+          "confidence": "low"
+        },
+        {
+          "name": "Kitchen",
+          "gt_sqft": 193.8,
+          "parsed_sqft": 167.6,
+          "err_pct": 13.5,
+          "confidence": "low"
+        },
+        {
+          "name": "Master Bedroom",
+          "gt_sqft": 172.2,
+          "parsed_sqft": 187.6,
+          "err_pct": 8.9,
+          "confidence": "high"
+        },
+        {
+          "name": "Bedroom 2",
+          "gt_sqft": 150.7,
+          "parsed_sqft": 172.1,
+          "err_pct": 14.2,
+          "confidence": "high"
+        },
+        {
+          "name": "Bathroom",
+          "gt_sqft": 64.6,
+          "parsed_sqft": 61.6,
+          "err_pct": 4.6,
+          "confidence": "high"
+        }
+      ],
+      "missed_rooms": [
+        "Living Room"
+      ],
+      "warnings": [
+        "Mock parser \u2014 live AI parser unavailable"
+      ]
+    },
+    {
+      "blueprint": "family-house.svg",
+      "mode": "mock",
+      "detection_rate_pct": 87.5,
+      "matched": 7,
+      "total_gt": 8,
+      "avg_area_error_pct": 9.4,
+      "avg_area_accuracy_pct": 90.5,
+      "confidence_dist": {
+        "high": 3,
+        "medium": 4
+      },
+      "matched_rooms": [
+        {
+          "name": "Hallway",
+          "gt_sqft": 258.3,
+          "parsed_sqft": 258.3,
+          "err_pct": null,
+          "confidence": "high"
+        },
+        {
+          "name": "Garage",
+          "gt_sqft": 322.9,
+          "parsed_sqft": 301.9,
+          "err_pct": 6.5,
+          "confidence": "medium"
+        },
+        {
+          "name": "Living Room",
+          "gt_sqft": 269.1,
+          "parsed_sqft": 309.8,
+          "err_pct": 15.1,
+          "confidence": "high"
+        },
+        {
+          "name": "Master Bedroom",
+          "gt_sqft": 150.7,
+          "parsed_sqft": 133.0,
+          "err_pct": 11.7,
+          "confidence": "medium"
+        },
+        {
+          "name": "Ensuite",
+          "gt_sqft": 53.8,
+          "parsed_sqft": 47.5,
+          "err_pct": 11.7,
+          "confidence": "medium"
+        },
+        {
+          "name": "Bedroom 2",
+          "gt_sqft": 129.2,
+          "parsed_sqft": 119.7,
+          "err_pct": 7.4,
+          "confidence": "medium"
+        },
+        {
+          "name": "Bathroom",
+          "gt_sqft": 53.8,
+          "parsed_sqft": 51.5,
+          "err_pct": 4.3,
+          "confidence": "high"
+        }
+      ],
+      "missed_rooms": [
+        "Kitchen"
+      ],
+      "warnings": [
+        "Mock parser \u2014 live AI parser unavailable"
+      ]
+    },
+    {
+      "blueprint": "house.svg",
+      "mode": "mock",
+      "detection_rate_pct": 80.0,
+      "matched": 4,
+      "total_gt": 5,
+      "avg_area_error_pct": 9.5,
+      "avg_area_accuracy_pct": 90.5,
+      "confidence_dist": {
+        "high": 2,
+        "medium": 1,
+        "low": 1
+      },
+      "matched_rooms": [
+        {
+          "name": "Kitchen",
+          "gt_sqft": 258.3,
+          "parsed_sqft": 257.3,
+          "err_pct": 0.4,
+          "confidence": "high"
+        },
+        {
+          "name": "Hallway",
+          "gt_sqft": 258.3,
+          "parsed_sqft": 227.5,
+          "err_pct": 11.9,
+          "confidence": "medium"
+        },
+        {
+          "name": "Master Bedroom",
+          "gt_sqft": 155.0,
+          "parsed_sqft": 132.8,
+          "err_pct": 14.3,
+          "confidence": "low"
+        },
+        {
+          "name": "Bathroom",
+          "gt_sqft": 61.6,
+          "parsed_sqft": 68.7,
+          "err_pct": 11.5,
+          "confidence": "high"
+        }
+      ],
+      "missed_rooms": [
+        "Living Room"
+      ],
+      "warnings": [
+        "Mock parser \u2014 live AI parser unavailable"
+      ]
+    },
+    {
+      "blueprint": "l-shaped-house.png",
+      "mode": "mock",
+      "detection_rate_pct": 80.0,
+      "matched": 4,
+      "total_gt": 5,
+      "avg_area_error_pct": 10.1,
+      "avg_area_accuracy_pct": 89.8,
+      "confidence_dist": {
+        "high": 1,
+        "low": 2,
+        "medium": 1
+      },
+      "matched_rooms": [
+        {
+          "name": "Entry",
+          "gt_sqft": 86.1,
+          "parsed_sqft": 84.8,
+          "err_pct": 1.5,
+          "confidence": "high"
+        },
+        {
+          "name": "Living Room",
+          "gt_sqft": 376.7,
+          "parsed_sqft": 323.1,
+          "err_pct": 14.2,
+          "confidence": "low"
+        },
+        {
+          "name": "Master Bedroom",
+          "gt_sqft": 193.8,
+          "parsed_sqft": 165.4,
+          "err_pct": 14.7,
+          "confidence": "low"
+        },
+        {
+          "name": "Ensuite",
+          "gt_sqft": 53.8,
+          "parsed_sqft": 48.3,
+          "err_pct": 10.2,
+          "confidence": "medium"
+        }
+      ],
+      "missed_rooms": [
+        "Kitchen"
+      ],
+      "warnings": [
+        "Mock parser \u2014 live AI parser unavailable"
+      ]
+    },
+    {
+      "blueprint": "simple-house.svg",
+      "mode": "mock",
+      "detection_rate_pct": 83.3,
+      "matched": 5,
+      "total_gt": 6,
+      "avg_area_error_pct": 5.3,
+      "avg_area_accuracy_pct": 94.7,
+      "confidence_dist": {
+        "high": 5
+      },
+      "matched_rooms": [
+        {
+          "name": "Hallway",
+          "gt_sqft": 215.3,
+          "parsed_sqft": 209.6,
+          "err_pct": 2.6,
+          "confidence": "high"
+        },
+        {
+          "name": "Living Room",
+          "gt_sqft": 236.8,
+          "parsed_sqft": 228.9,
+          "err_pct": 3.3,
+          "confidence": "high"
+        },
+        {
+          "name": "Kitchen",
+          "gt_sqft": 129.2,
+          "parsed_sqft": 147.9,
+          "err_pct": 14.5,
+          "confidence": "high"
+        },
+        {
+          "name": "Bedroom 2",
+          "gt_sqft": 129.2,
+          "parsed_sqft": 128.4,
+          "err_pct": 0.6,
+          "confidence": "high"
+        },
+        {
+          "name": "Bathroom",
+          "gt_sqft": 53.8,
+          "parsed_sqft": 56.7,
+          "err_pct": 5.4,
+          "confidence": "high"
+        }
+      ],
+      "missed_rooms": [
+        "Master Bedroom"
+      ],
+      "warnings": [
+        "Mock parser \u2014 live AI parser unavailable"
+      ]
+    },
+    {
+      "blueprint": "u-shaped-house.png",
+      "mode": "mock",
+      "detection_rate_pct": 75.0,
+      "matched": 6,
+      "total_gt": 8,
+      "avg_area_error_pct": 9.0,
+      "avg_area_accuracy_pct": 91.0,
+      "confidence_dist": {
+        "high": 5,
+        "low": 1
+      },
+      "matched_rooms": [
+        {
+          "name": "Entry Foyer",
+          "gt_sqft": 301.4,
+          "parsed_sqft": 344.0,
+          "err_pct": 14.1,
+          "confidence": "high"
+        },
+        {
+          "name": "Kitchen",
+          "gt_sqft": 279.9,
+          "parsed_sqft": 241.2,
+          "err_pct": 13.8,
+          "confidence": "low"
+        },
+        {
+          "name": "Master Bedroom",
+          "gt_sqft": 387.5,
+          "parsed_sqft": 402.8,
+          "err_pct": 3.9,
+          "confidence": "high"
+        },
+        {
+          "name": "Master Ensuite",
+          "gt_sqft": 64.6,
+          "parsed_sqft": 74.6,
+          "err_pct": 15.5,
+          "confidence": "high"
+        },
+        {
+          "name": "West Hall",
+          "gt_sqft": 161.5,
+          "parsed_sqft": 165.5,
+          "err_pct": 2.5,
+          "confidence": "high"
+        },
+        {
+          "name": "Shared Bathroom",
+          "gt_sqft": 75.3,
+          "parsed_sqft": 78.4,
+          "err_pct": 4.1,
+          "confidence": "high"
+        }
+      ],
+      "missed_rooms": [
+        "Living Room",
+        "Bedroom 2"
+      ],
+      "warnings": [
+        "Mock parser \u2014 live AI parser unavailable"
+      ]
+    }
+  ]
+}

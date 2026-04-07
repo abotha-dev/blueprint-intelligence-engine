@@ -1,0 +1,39 @@
+{
+  "source": "Public Planscript geometry + SVG (https://github.com/jfromaniello/planscript)",
+  "units": "m",
+  "total_area_sqft": 1249.9,
+  "total_area_sqm": 116.12,
+  "rooms": [
+    {
+      "name": "Living Room",
+      "area_sqft": 516.7,
+      "area_sqm": 48.0,
+      "confidence_expected": "high"
+    },
+    {
+      "name": "Kitchen",
+      "area_sqft": 258.3,
+      "area_sqm": 24.0,
+      "confidence_expected": "high"
+    },
+    {
+      "name": "Hallway",
+      "area_sqft": 258.3,
+      "area_sqm": 24.0,
+      "confidence_expected": "high"
+    },
+    {
+      "name": "Master Bedroom",
+      "area_sqft": 155.0,
+      "area_sqm": 14.4,
+      "confidence_expected": "high"
+    },
+    {
+      "name": "Bathroom",
+      "area_sqft": 61.6,
+      "area_sqm": 5.72,
+      "confidence_expected": "high"
+    }
+  ],
+  "notes": "Ground truth derived from the public example geometry room areas."
+}

@@ -1,0 +1,57 @@
+{
+  "source": "Public Planscript example intent + SVG (https://github.com/jfromaniello/planscript)",
+  "units": "m",
+  "total_area_sqft": 1808.3,
+  "total_area_sqm": 168.0,
+  "rooms": [
+    {
+      "name": "Entry Foyer",
+      "area_sqft": 301.4,
+      "area_sqm": 28.0,
+      "confidence_expected": "high"
+    },
+    {
+      "name": "Living Room",
+      "area_sqft": 322.9,
+      "area_sqm": 30.0,
+      "confidence_expected": "high"
+    },
+    {
+      "name": "Kitchen",
+      "area_sqft": 279.9,
+      "area_sqm": 26.0,
+      "confidence_expected": "high"
+    },
+    {
+      "name": "Master Bedroom",
+      "area_sqft": 387.5,
+      "area_sqm": 36.0,
+      "confidence_expected": "high"
+    },
+    {
+      "name": "Master Ensuite",
+      "area_sqft": 64.6,
+      "area_sqm": 6.0,
+      "confidence_expected": "high"
+    },
+    {
+      "name": "West Hall",
+      "area_sqft": 161.5,
+      "area_sqm": 15.0,
+      "confidence_expected": "high"
+    },
+    {
+      "name": "Bedroom 2",
+      "area_sqft": 215.3,
+      "area_sqm": 20.0,
+      "confidence_expected": "high"
+    },
+    {
+      "name": "Shared Bathroom",
+      "area_sqft": 75.3,
+      "area_sqm": 7.0,
+      "confidence_expected": "high"
+    }
+  ],
+  "notes": "Ground truth derived from the public example intent file targetArea values because CubiCasa5k GitHub does not include sample floor plan assets in-repo."
+}
