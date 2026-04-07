@@ -35,16 +35,16 @@ def room_area_sqft(room, unit_system="metric"):
     if a is None: return None
     return round(a * 10.7639, 1) if unit_system == "metric" else round(a, 1)
 
-def run_live_parser(image_path):
+def run_live_parser(image_path, two_pass=False):
     from parser.blueprint_parser import BlueprintParser
     parser = BlueprintParser()
-    result = parser.parse(str(image_path))
+    result = parser.parse(str(image_path), two_pass=two_pass)
     return result.to_dict() if hasattr(result, "to_dict") else result
 
-def evaluate(image_path, gt):
+def evaluate(image_path, gt, two_pass=False):
     try:
-        analysis = run_live_parser(image_path)
-        mode = "live"
+        analysis = run_live_parser(image_path, two_pass=two_pass)
+        mode = "live-two-pass" if two_pass else "live"
     except Exception as e:
         print(f"  ⚠ Live parser failed ({e}), using mock")
         analysis = mock_analysis(image_path, gt)
@@ -97,9 +97,30 @@ def mock_analysis(image_path, gt):
     return {"rooms": rooms, "unit_system": "metric",
             "warnings": ["Mock parser — live AI parser unavailable"]}
 
+def check_preprocessing(image_path):
+    """Verify preprocessing pipeline fires and log input/output dimensions."""
+    try:
+        from preprocessing.image_enhancer import enhance_image_for_vision
+        from PIL import Image
+        img = Image.open(image_path)
+        w_in, h_in = img.size
+        enhancement = enhance_image_for_vision(str(image_path))
+        # Decode base64 to get output size
+        import base64, io
+        img_out = Image.open(io.BytesIO(base64.b64decode(enhancement.image_base64)))
+        w_out, h_out = img_out.size
+        print(f"  🔍 Preprocessing: {w_in}×{h_in} → {w_out}×{h_out} | enhanced={enhancement.enhanced} | ops={enhancement.operations}")
+        return enhancement
+    except Exception as e:
+        print(f"  ⚠ Preprocessing check failed: {e}")
+        return None
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mock", action="store_true", help="Force mock mode")
+    parser.add_argument("--two-pass", action="store_true", help="Use two-pass extraction (OCR + analysis)")
+    parser.add_argument("--compare", action="store_true", help="Run both single-pass and two-pass, show delta")
+    parser.add_argument("--check-preprocessing", action="store_true", help="Log preprocessing dimensions for each blueprint")
     args = parser.parse_args()
 
     gt_files = list(GT_DIR.glob("*_gt.json"))
@@ -115,9 +136,25 @@ def main():
             print(f"  ⚠ No image for {stem}, skipping"); continue
         gt = json.loads(gt_path.read_text())
         print(f"Testing: {img.name}")
-        r = evaluate(img, gt)
-        print(f"  Detection: {r['detection_rate_pct']}% | Area accuracy: {r['avg_area_accuracy_pct']}% | Mode: {r['mode']}")
-        results.append(r)
+
+        if args.check_preprocessing:
+            check_preprocessing(img)
+
+        if args.compare:
+            r1 = evaluate(img, gt, two_pass=False)
+            r2 = evaluate(img, gt, two_pass=True)
+            det_delta = r2["detection_rate_pct"] - r1["detection_rate_pct"]
+            acc1 = r1["avg_area_accuracy_pct"] or 0
+            acc2 = r2["avg_area_accuracy_pct"] or 0
+            acc_delta = acc2 - acc1
+            print(f"  single: {r1['detection_rate_pct']}% det / {r1['avg_area_accuracy_pct']}% acc")
+            print(f"  two-pass: {r2['detection_rate_pct']}% det / {r2['avg_area_accuracy_pct']}% acc")
+            print(f"  delta: det {det_delta:+.1f}% | acc {acc_delta:+.1f}%")
+            results.append(r2)  # use two-pass result for aggregate
+        else:
+            r = evaluate(img, gt, two_pass=args.two_pass)
+            print(f"  Detection: {r['detection_rate_pct']}% | Area accuracy: {r['avg_area_accuracy_pct']}% | Mode: {r['mode']}")
+            results.append(r)
 
     if not results:
         print("No results."); sys.exit(1)
