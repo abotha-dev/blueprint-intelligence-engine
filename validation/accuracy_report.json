@@ -2,10 +2,10 @@
   "aggregate": {
     "blueprints_tested": 6,
     "avg_detection_rate_pct": 100.0,
-    "avg_area_accuracy_pct": 58.9,
+    "avg_area_accuracy_pct": 72.7,
     "confidence_distribution": {
-      "low": 34,
-      "high": 4
+      "low": 33,
+      "high": 5
     }
   },
   "per_blueprint": [
@@ -15,8 +15,8 @@
       "detection_rate_pct": 100.0,
       "matched": 6,
       "total_gt": 6,
-      "avg_area_error_pct": 54.9,
-      "avg_area_accuracy_pct": 45.1,
+      "avg_area_error_pct": 20.5,
+      "avg_area_accuracy_pct": 79.5,
       "confidence_dist": {
         "low": 6
       },
@@ -24,49 +24,49 @@
         {
           "name": "Hallway",
           "gt_sqft": 193.8,
-          "parsed_sqft": 53.8,
-          "err_pct": 72.2,
+          "parsed_sqft": 129.2,
+          "err_pct": 33.3,
           "confidence": "low"
         },
         {
           "name": "Living Room",
           "gt_sqft": 430.6,
-          "parsed_sqft": 538.2,
+          "parsed_sqft": 322.9,
           "err_pct": 25.0,
           "confidence": "low"
         },
         {
           "name": "Kitchen",
           "gt_sqft": 193.8,
-          "parsed_sqft": 322.9,
-          "err_pct": 66.6,
+          "parsed_sqft": 215.3,
+          "err_pct": 11.1,
           "confidence": "low"
         },
         {
           "name": "Master Bedroom",
           "gt_sqft": 172.2,
-          "parsed_sqft": 269.1,
-          "err_pct": 56.3,
+          "parsed_sqft": 193.8,
+          "err_pct": 12.5,
           "confidence": "low"
         },
         {
           "name": "Bedroom 2",
           "gt_sqft": 150.7,
-          "parsed_sqft": 215.3,
-          "err_pct": 42.9,
+          "parsed_sqft": 150.7,
+          "err_pct": null,
           "confidence": "low"
         },
         {
           "name": "Bathroom",
           "gt_sqft": 64.6,
-          "parsed_sqft": 107.6,
-          "err_pct": 66.6,
+          "parsed_sqft": 64.6,
+          "err_pct": null,
           "confidence": "low"
         }
       ],
       "missed_rooms": [],
       "warnings": [
-        "Area estimated by visual proportion only \u2014 no scale or labels found",
+        "Area estimated by visual proportion from estimated total \u2014 no scale or labels found",
         "Image enhancement applied: True (contrast, sharpen)"
       ]
     },
@@ -76,8 +76,8 @@
       "detection_rate_pct": 100.0,
       "matched": 8,
       "total_gt": 8,
-      "avg_area_error_pct": 55.0,
-      "avg_area_accuracy_pct": 45.0,
+      "avg_area_error_pct": 23.8,
+      "avg_area_accuracy_pct": 76.2,
       "confidence_dist": {
         "low": 8
       },
@@ -85,15 +85,15 @@
         {
           "name": "Hallway",
           "gt_sqft": 258.3,
-          "parsed_sqft": 107.6,
-          "err_pct": 58.3,
+          "parsed_sqft": 161.5,
+          "err_pct": 37.5,
           "confidence": "low"
         },
         {
           "name": "Garage",
           "gt_sqft": 322.9,
-          "parsed_sqft": 215.3,
-          "err_pct": 33.3,
+          "parsed_sqft": 269.1,
+          "err_pct": 16.7,
           "confidence": "low"
         },
         {
@@ -106,42 +106,42 @@
         {
           "name": "Kitchen",
           "gt_sqft": 129.2,
-          "parsed_sqft": 161.5,
-          "err_pct": 25.0,
+          "parsed_sqft": 150.7,
+          "err_pct": 16.6,
           "confidence": "low"
         },
         {
           "name": "Master Bedroom",
           "gt_sqft": 150.7,
-          "parsed_sqft": 269.1,
-          "err_pct": 78.6,
+          "parsed_sqft": 215.3,
+          "err_pct": 42.9,
           "confidence": "low"
         },
         {
           "name": "Ensuite",
           "gt_sqft": 53.8,
-          "parsed_sqft": 107.6,
-          "err_pct": 100.0,
+          "parsed_sqft": 64.6,
+          "err_pct": 20.1,
           "confidence": "low"
         },
         {
           "name": "Bedroom 2",
           "gt_sqft": 129.2,
-          "parsed_sqft": 161.5,
-          "err_pct": 25.0,
+          "parsed_sqft": 150.7,
+          "err_pct": 16.6,
           "confidence": "low"
         },
         {
           "name": "Bathroom",
           "gt_sqft": 53.8,
-          "parsed_sqft": 107.6,
-          "err_pct": 100.0,
+          "parsed_sqft": 64.6,
+          "err_pct": 20.1,
           "confidence": "low"
         }
       ],
       "missed_rooms": [],
       "warnings": [
-        "Area estimated by visual proportion only \u2014 no scale or labels found",
+        "Area estimated by visual proportion from estimated total \u2014 no scale or labels found",
         "Image enhancement applied: True (contrast, sharpen)"
       ]
     },
@@ -151,11 +151,10 @@
       "detection_rate_pct": 100.0,
       "matched": 5,
       "total_gt": 5,
-      "avg_area_error_pct": 34.7,
-      "avg_area_accuracy_pct": 65.3,
+      "avg_area_error_pct": 33.3,
+      "avg_area_accuracy_pct": 66.7,
       "confidence_dist": {
-        "high": 4,
-        "low": 1
+        "high": 5
       },
       "matched_rooms": [
         {
@@ -175,9 +174,9 @@
         {
           "name": "Hallway",
           "gt_sqft": 258.3,
-          "parsed_sqft": 161.5,
-          "err_pct": 37.5,
-          "confidence": "low"
+          "parsed_sqft": 172.2,
+          "err_pct": 33.3,
+          "confidence": "high"
         },
         {
           "name": "Master Bedroom",
@@ -196,7 +195,6 @@
       ],
       "missed_rooms": [],
       "warnings": [
-        "Area estimated by visual proportion only \u2014 no scale or labels found",
         "Image enhancement applied: True (minimal-adjustment, contrast, sharpen)"
       ]
     },
@@ -206,8 +204,8 @@
       "detection_rate_pct": 100.0,
       "matched": 5,
       "total_gt": 5,
-      "avg_area_error_pct": 22.1,
-      "avg_area_accuracy_pct": 78.0,
+      "avg_area_error_pct": 18.7,
+      "avg_area_accuracy_pct": 81.3,
       "confidence_dist": {
         "low": 5
       },
@@ -215,8 +213,8 @@
         {
           "name": "Entry",
           "gt_sqft": 86.1,
-          "parsed_sqft": 86.1,
-          "err_pct": null,
+          "parsed_sqft": 53.8,
+          "err_pct": 37.5,
           "confidence": "low"
         },
         {
@@ -229,28 +227,28 @@
         {
           "name": "Living Room",
           "gt_sqft": 376.7,
-          "parsed_sqft": 269.1,
-          "err_pct": 28.6,
+          "parsed_sqft": 322.9,
+          "err_pct": 14.3,
           "confidence": "low"
         },
         {
           "name": "Master Bedroom",
           "gt_sqft": 193.8,
-          "parsed_sqft": 129.2,
-          "err_pct": 33.3,
+          "parsed_sqft": 161.5,
+          "err_pct": 16.7,
           "confidence": "low"
         },
         {
           "name": "Ensuite",
           "gt_sqft": 53.8,
-          "parsed_sqft": 64.6,
-          "err_pct": 20.1,
+          "parsed_sqft": 53.8,
+          "err_pct": null,
           "confidence": "low"
         }
       ],
       "missed_rooms": [],
       "warnings": [
-        "Area estimated by visual proportion only \u2014 no scale or labels found",
+        "Area estimated by visual proportion from estimated total \u2014 no scale or labels found",
         "Image enhancement applied: True (contrast, sharpen)"
       ]
     },
@@ -260,8 +258,8 @@
       "detection_rate_pct": 100.0,
       "matched": 6,
       "total_gt": 6,
-      "avg_area_error_pct": 38.4,
-      "avg_area_accuracy_pct": 61.6,
+      "avg_area_error_pct": 30.9,
+      "avg_area_accuracy_pct": 69.1,
       "confidence_dist": {
         "low": 6
       },
@@ -269,15 +267,15 @@
         {
           "name": "Hallway",
           "gt_sqft": 215.3,
-          "parsed_sqft": 107.6,
-          "err_pct": 50.0,
+          "parsed_sqft": 161.5,
+          "err_pct": 25.0,
           "confidence": "low"
         },
         {
           "name": "Living Room",
           "gt_sqft": 236.8,
-          "parsed_sqft": 269.1,
-          "err_pct": 13.6,
+          "parsed_sqft": 322.9,
+          "err_pct": 36.4,
           "confidence": "low"
         },
         {
@@ -290,8 +288,8 @@
         {
           "name": "Master Bedroom",
           "gt_sqft": 150.7,
-          "parsed_sqft": 269.1,
-          "err_pct": 78.6,
+          "parsed_sqft": 215.3,
+          "err_pct": 42.9,
           "confidence": "low"
         },
         {
@@ -311,7 +309,7 @@
       ],
       "missed_rooms": [],
       "warnings": [
-        "Area estimated by visual proportion only \u2014 no scale or labels found",
+        "Area estimated by visual proportion from estimated total \u2014 no scale or labels found",
         "Image enhancement applied: True (contrast, sharpen)"
       ]
     },
@@ -321,8 +319,8 @@
       "detection_rate_pct": 100.0,
       "matched": 8,
       "total_gt": 8,
-      "avg_area_error_pct": 41.5,
-      "avg_area_accuracy_pct": 58.5,
+      "avg_area_error_pct": 36.6,
+      "avg_area_accuracy_pct": 63.4,
       "confidence_dist": {
         "low": 8
       },
@@ -330,8 +328,8 @@
         {
           "name": "Entry Foyer",
           "gt_sqft": 301.4,
-          "parsed_sqft": 269.1,
-          "err_pct": 10.7,
+          "parsed_sqft": 161.5,
+          "err_pct": 46.4,
           "confidence": "low"
         },
         {
@@ -344,22 +342,22 @@
         {
           "name": "Kitchen",
           "gt_sqft": 279.9,
-          "parsed_sqft": 215.3,
-          "err_pct": 23.1,
+          "parsed_sqft": 161.5,
+          "err_pct": 42.3,
           "confidence": "low"
         },
         {
           "name": "Master Bedroom",
           "gt_sqft": 387.5,
-          "parsed_sqft": 269.1,
-          "err_pct": 30.6,
+          "parsed_sqft": 193.8,
+          "err_pct": 50.0,
           "confidence": "low"
         },
         {
           "name": "Master Ensuite",
           "gt_sqft": 64.6,
-          "parsed_sqft": 161.5,
-          "err_pct": 150.0,
+          "parsed_sqft": 96.9,
+          "err_pct": 50.0,
           "confidence": "low"
         },
         {
@@ -372,21 +370,21 @@
         {
           "name": "Bedroom 2",
           "gt_sqft": 215.3,
-          "parsed_sqft": 161.5,
-          "err_pct": 25.0,
+          "parsed_sqft": 129.2,
+          "err_pct": 40.0,
           "confidence": "low"
         },
         {
           "name": "Shared Bathroom",
           "gt_sqft": 75.3,
-          "parsed_sqft": 107.6,
-          "err_pct": 42.9,
+          "parsed_sqft": 64.6,
+          "err_pct": 14.2,
           "confidence": "low"
         }
       ],
       "missed_rooms": [],
       "warnings": [
-        "Area estimated by visual proportion only \u2014 no scale or labels found",
+        "Area estimated by visual proportion from estimated total \u2014 no scale or labels found",
         "Image enhancement applied: True (contrast, sharpen)"
       ]
     }

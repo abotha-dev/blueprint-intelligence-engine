@@ -86,7 +86,12 @@ If not found: scale_found=false
 STEP 2 — DETECT UNIT SYSTEM:
 - METRIC: measurements use m, cm, mm, or m²
 - IMPERIAL: measurements use ft, ', ", sq ft
-- Ambiguous: default to metric when values look like 2–8 range; imperial when 10–25 range
+- Ambiguous with no text labels: use the size sanity check:
+  * A typical living room in METRIC is 15–40 m². In IMPERIAL it's 150–430 sq ft.
+  * A typical bedroom in METRIC is 10–20 m². In IMPERIAL it's 110–215 sq ft.
+  * If your estimated total area for the whole plan is between 50–250, it's almost certainly METRIC.
+  * If your estimated total is between 500–2500, it's almost certainly IMPERIAL.
+  * Default to METRIC if genuinely uncertain.
 
 STEP 3 — EXTRACT LABELED DIMENSIONS (highest priority):
 For every room with visible dimension annotations:
@@ -103,18 +108,28 @@ Only if scale_found=true AND the room has no explicit dimension labels:
 
 STEP 5 — PROPORTION-ONLY ESTIMATE (last resort: no scale, no label):
 Only if scale_found=false AND the room has no explicit dimension labels:
-a) Identify the LARGEST room in the plan visually. Assign it an anchor area:
-   - Metric plans: anchor = 25 m² for the largest room
-   - Imperial plans: anchor = 270 sq ft for the largest room
-b) Compare every other room's visual footprint to the largest room. Assign areas proportionally.
-   Example: if a bedroom looks roughly 60% as large as the living room, its area = 0.6 × 25 = 15 m²
-c) confidence = "low" for ALL rooms estimated this way
-d) Add warning: "Area estimated by visual proportion only — no scale or labels found"
-- NEVER use NAHB industry averages or per-room-type lookup tables
+a) FIRST, estimate the TOTAL floor plan area by looking at the overall building footprint:
+   - A compact 2-bedroom home ≈ 70–90 m² (750–970 sq ft)
+   - A standard 3-bedroom home ≈ 100–140 m² (1,075–1,500 sq ft)
+   - A large 4-bedroom home ≈ 150–200 m² (1,600–2,150 sq ft)
+   Count the rooms and assess the overall footprint scale to pick a realistic total.
+b) Assign each room a percentage of that total based on its visual footprint share:
+   - Living/family room: typically 20–30% of total
+   - Master bedroom: typically 12–18% of total
+   - Other bedrooms: typically 10–14% of total
+   - Kitchen: typically 10–15% of total
+   - Hallways/corridors: typically 10–20% of total — hallways run the FULL LENGTH of the building; do NOT underestimate them
+   - Bathrooms: typically 4–8% of total
+   Adjust each percentage up or down based on visual proportion relative to other rooms.
+c) Multiply total area × room percentage = room area
+d) confidence = "low" for ALL rooms estimated this way
+e) Add warning: "Area estimated by visual proportion from estimated total — no scale or labels found"
+- NEVER use NAHB per-room-type lookup tables
 
 CRITICAL RULES:
 - ALWAYS list every room you can identify in the floor plan. Never omit a room.
 - ALWAYS provide a numeric area estimate. area=null is not allowed — use proportional estimation if nothing else.
+- Hallways and corridors are linear features that run the FULL LENGTH of the building. Always measure their full width × length; never treat them as a small square box.
 - "medium" confidence = scale-derived only. Never assign "medium" without a scale reference.
 - "low" confidence = proportion estimate. Every room gets a proportional estimate if no better data.
 - Keep all values in ORIGINAL units — no conversion.
@@ -393,6 +408,29 @@ Return ONLY the JSON object, no additional text."""
                     model_used=f"{self.provider}:{self.model}"
                 )
             
+            # Sanity-check unit system against total area to catch metric/imperial confusion.
+            # A residential floor plan total area: metric=50–300 m², imperial=500–3500 sq ft.
+            # If total_area is in the 50–300 range and unit_system is imperial, it's almost
+            # certainly metric (e.g. model returns 110 "sq ft" for a 110 m² plan).
+            unit_system = data.get("unit_system", "unknown")
+            try:
+                reported_total = float(str(data.get("total_area", "") or "").replace(",", ""))
+                if unit_system == "imperial" and 40 <= reported_total <= 400:
+                    logger.warning(
+                        "Unit sanity check: model said imperial but total_area=%.0f looks metric. "
+                        "Correcting to metric.", reported_total
+                    )
+                    unit_system = "metric"
+                    data["unit_system"] = "metric"
+                    warnings_override = list(data.get("warnings", []))
+                    warnings_override.append(
+                        f"Unit system corrected imperial→metric: reported total {reported_total:.0f} "
+                        "is consistent with m², not sq ft"
+                    )
+                    data["warnings"] = warnings_override
+            except (ValueError, TypeError):
+                pass
+
             # Convert to Room objects
             rooms = []
             for room_data in data.get("rooms", []):
@@ -401,11 +439,11 @@ Return ONLY the JSON object, no additional text."""
                     width=room_data.get("width"),
                     length=room_data.get("length"),
                     area=room_data.get("area"),
-                    unit=data.get("unit_system", "unknown"),
+                    unit=unit_system,
                     confidence=room_data.get("confidence", "medium")
                 )
                 rooms.append(room)
-            
+
             # Create the analysis result
             warnings = list(data.get("warnings", []))
             warnings.append(
@@ -418,7 +456,7 @@ Return ONLY the JSON object, no additional text."""
                 filename=filename,
                 rooms=rooms,
                 total_area=data.get("total_area"),
-                unit_system=data.get("unit_system", "unknown"),
+                unit_system=unit_system,
                 warnings=warnings,
                 raw_response=raw_response,
                 model_used=f"{self.provider}:{self.model}"
