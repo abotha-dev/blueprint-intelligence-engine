@@ -2,44 +2,44 @@
 
 ## Aggregate Results
 - Blueprints tested: 6
-- Avg room detection rate: **81.5%**
-- Avg area accuracy: **90.9%**
-- Confidence distribution: {"low": 6, "high": 19, "medium": 6}
+- Avg room detection rate: **66.7%**
+- Avg area accuracy: **62.8%**
+- Confidence distribution: {"high": 25}
 
 ## Per-Blueprint Results
 
-### corridor-house.png (mock parser)
-- Detection: 83.3% (5/6 rooms)
-- Area accuracy: 88.8%
-- Confidence: {'low': 2, 'high': 3}
-- Missed: Living Room
+### corridor-house.png (live parser)
+- Detection: 100.0% (6/6 rooms)
+- Area accuracy: 65.9%
+- Confidence: {'high': 6}
+- Missed: none
 
-### family-house.svg (mock parser)
-- Detection: 87.5% (7/8 rooms)
-- Area accuracy: 90.5%
-- Confidence: {'high': 3, 'medium': 4}
-- Missed: Kitchen
+### family-house.png (live parser)
+- Detection: 0.0% (0/8 rooms)
+- Area accuracy: None%
+- Confidence: {}
+- Missed: Hallway, Garage, Living Room, Kitchen, Master Bedroom, Ensuite, Bedroom 2, Bathroom
 
-### house.svg (mock parser)
-- Detection: 80.0% (4/5 rooms)
-- Area accuracy: 90.5%
-- Confidence: {'high': 2, 'medium': 1, 'low': 1}
-- Missed: Living Room
-
-### l-shaped-house.png (mock parser)
-- Detection: 80.0% (4/5 rooms)
-- Area accuracy: 89.8%
-- Confidence: {'high': 1, 'low': 2, 'medium': 1}
-- Missed: Kitchen
-
-### simple-house.svg (mock parser)
-- Detection: 83.3% (5/6 rooms)
-- Area accuracy: 94.7%
+### house.png (live parser)
+- Detection: 100.0% (5/5 rooms)
+- Area accuracy: 66.7%
 - Confidence: {'high': 5}
-- Missed: Master Bedroom
+- Missed: none
 
-### u-shaped-house.png (mock parser)
-- Detection: 75.0% (6/8 rooms)
-- Area accuracy: 91.0%
-- Confidence: {'high': 5, 'low': 1}
-- Missed: Living Room, Bedroom 2
+### l-shaped-house.png (live parser)
+- Detection: 0.0% (0/5 rooms)
+- Area accuracy: None%
+- Confidence: {}
+- Missed: Entry, Kitchen, Living Room, Master Bedroom, Ensuite
+
+### simple-house.png (live parser)
+- Detection: 100.0% (6/6 rooms)
+- Area accuracy: 62.5%
+- Confidence: {'high': 6}
+- Missed: none
+
+### u-shaped-house.png (live parser)
+- Detection: 100.0% (8/8 rooms)
+- Area accuracy: 56.1%
+- Confidence: {'high': 8}
+- Missed: none

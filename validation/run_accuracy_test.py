@@ -110,7 +110,7 @@ def main():
     for gt_path in sorted(gt_files):
         stem = gt_path.stem.replace("_gt", "")
         img = next((p for p in BLUEPRINT_DIR.iterdir()
-                    if p.stem == stem and p.suffix in (".png",".jpg",".jpeg",".svg")), None)
+                    if p.stem == stem and p.suffix in (".png",".jpg",".jpeg",".webp")), None)
         if not img:
             print(f"  ⚠ No image for {stem}, skipping"); continue
         gt = json.loads(gt_path.read_text())
