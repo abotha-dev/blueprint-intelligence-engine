@@ -16,10 +16,10 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 # Price IDs from Stripe Dashboard
 PRICE_IDS = {
-    "pro_monthly": os.getenv("STRIPE_PRICE_PRO_MONTHLY", "price_1SrsunFKb6Pa4iH5fwsIyemi"),
-    "pro_annual": os.getenv("STRIPE_PRICE_PRO_ANNUAL", "price_1SrsunFKb6Pa4iH5nBVULeuf"),
-    "agency_monthly": os.getenv("STRIPE_PRICE_AGENCY_MONTHLY", "price_1SrswrFKb6Pa4iH5dwowQve5"),
-    "agency_annual": os.getenv("STRIPE_PRICE_AGENCY_ANNUAL", "price_1SrswrFKb6Pa4iH5PM1ubCpG"),
+    "pro_monthly": os.getenv("STRIPE_PRICE_PRO_MONTHLY", "price_1TJhj3FJgKshDYfsKQJeC6f2"),
+    "pro_annual": os.getenv("STRIPE_PRICE_PRO_ANNUAL", "price_1SuJ5JFJgKshDYfsmGG5yb2u"),
+    "agency_monthly": os.getenv("STRIPE_PRICE_AGENCY_MONTHLY", "price_1SuJ6dFJgKshDYfsqQkqMkQv"),
+    "agency_annual": os.getenv("STRIPE_PRICE_AGENCY_ANNUAL", "price_1SuJ7pFJgKshDYfsIEjnsOPY"),
 }
 
 # Webhook secret for verifying Stripe events
@@ -344,37 +344,37 @@ PRICING_INFO = {
         "price_annual": 0,
         "estimates_per_month": 3,
         "features": [
-            "3 estimates per month",
-            "Basic room detection",
-            "Watermarked PDF reports",
-            "Standard materials only",
+            "3 full estimates per month",
+            "Room detection + area calc",
+            "Cost breakdown + materials",
+            "PDF report export",
         ],
     },
     "pro": {
         "name": "Pro",
-        "price_monthly": 49,
-        "price_annual": 490,
+        "price_monthly": 79,
+        "price_annual": 708,
         "estimates_per_month": -1,  # Unlimited
         "features": [
             "Unlimited estimates",
-            "Zip-code precision pricing",
-            "Custom branding on PDFs",
-            "All material categories",
-            "Priority email support",
+            "Structural shell estimates",
+            "Regional + zip code pricing",
+            "Priority processing",
+            "Cost comparison reports",
             "Export to Excel",
         ],
     },
     "agency": {
         "name": "Agency",
-        "price_monthly": 149,
-        "price_annual": 1490,
+        "price_monthly": 199,
+        "price_annual": 1908,
         "estimates_per_month": -1,  # Unlimited
         "features": [
             "Everything in Pro",
-            "Team accounts (up to 5 users)",
+            "Up to 10 team members",
             "White-label PDF reports",
             "API access",
-            "Priority phone support",
+            "Dedicated account manager",
             "Custom integrations",
         ],
     },
