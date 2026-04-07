@@ -209,6 +209,13 @@ class ExteriorEstimatesResponse(BaseModel):
     grand_total: float
 
 
+class MEPBreakdownResponse(BaseModel):
+    mep_estimate: float
+    mep_multiplier: float
+    disclaimer: str
+    includes: List[str]
+
+
 class ProjectEstimateResponse(BaseModel):
     project_name: str
     timestamp: str
@@ -220,6 +227,7 @@ class ProjectEstimateResponse(BaseModel):
     contingency_amount: float
     total_estimate: float
     notes: List[str]
+    mep_breakdown: Optional[MEPBreakdownResponse] = None
 
 
 class QualityComparisonResponse(BaseModel):
@@ -420,6 +428,7 @@ async def estimate_costs(
     quality_tier: QualityTierEnum = Query(QualityTierEnum.standard),
     region: Optional[str] = Query("us_national"),
     include_labor: bool = Query(True),
+    include_mep: bool = Query(False, description="Include rough MEP estimate (±30% accuracy)"),
     contingency_percent: float = Query(0.10)
 ):
     """
@@ -460,7 +469,7 @@ async def estimate_costs(
             )
         
         # Generate estimate
-        estimate = estimator.estimate_project(project_name, material_totals)
+        estimate = estimator.estimate_project(project_name, material_totals, include_mep=include_mep)
         
         # Convert to response format
         estimate_items = [
@@ -489,7 +498,8 @@ async def estimate_costs(
             contingency_percent=estimate.contingency_percent,
             contingency_amount=estimate.contingency_amount,
             total_estimate=estimate.total_estimate,
-            notes=estimate.notes
+            notes=estimate.notes,
+            mep_breakdown=estimate.mep_breakdown
         )
         
     except Exception as e:
@@ -504,6 +514,7 @@ async def full_analysis(
     region: Optional[str] = Query("us_national"),
     zipcode: Optional[str] = Query(None),
     include_labor: bool = Query(True),
+    include_mep: bool = Query(False, description="Include rough MEP estimate (±30% accuracy)"),
     contingency_percent: float = Query(0.10),
     labor_availability: LaborAvailabilityEnum = Query(LaborAvailabilityEnum.average)
 ):
@@ -596,7 +607,7 @@ async def full_analysis(
                 labor_availability=labor_avail
             )
             
-            estimate = estimator.estimate_project(project_name, totals)
+            estimate = estimator.estimate_project(project_name, totals, include_mep=include_mep)
             
             # Apply location-based pricing
             # Zipcode takes priority, then state code from region, then national average
@@ -632,6 +643,12 @@ async def full_analysis(
             adjusted_subtotal_labor = estimate.subtotal_labor * location_multiplier
             adjusted_contingency_amount = estimate.contingency_amount * location_multiplier
             adjusted_total_estimate = estimate.total_estimate * location_multiplier
+            adjusted_mep_breakdown = None
+            if estimate.mep_breakdown:
+                adjusted_mep_breakdown = {
+                    **estimate.mep_breakdown,
+                    "mep_estimate": round(float(estimate.mep_breakdown["mep_estimate"]) * location_multiplier, 2),
+                }
             
             # Update region display to show location name
             # Priority: zipcode location > state location > original region
@@ -647,7 +664,8 @@ async def full_analysis(
                 contingency_percent=estimate.contingency_percent,
                 contingency_amount=adjusted_contingency_amount,
                 total_estimate=adjusted_total_estimate,
-                notes=estimate.notes
+                notes=estimate.notes,
+                mep_breakdown=adjusted_mep_breakdown
             )
             
             # Step 4: Structural estimates (framing, foundation, roofing)

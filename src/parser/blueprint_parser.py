@@ -18,6 +18,30 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+NAHB_ROOM_SIZE_LOOKUP = {
+    # Total home sq ft: {room_type: avg_sq_ft}
+    "under_1000": {
+        "kitchen": 120, "bathroom": 40, "master_bedroom": 180,
+        "bedroom": 130, "living_room": 220, "dining_room": 100,
+    },
+    "1000_1500": {
+        "kitchen": 150, "bathroom": 50, "master_bedroom": 210,
+        "bedroom": 150, "living_room": 280, "dining_room": 130,
+    },
+    "1500_2000": {
+        "kitchen": 175, "bathroom": 55, "master_bedroom": 240,
+        "bedroom": 170, "living_room": 320, "dining_room": 150,
+    },
+    "2000_2500": {
+        "kitchen": 200, "bathroom": 60, "master_bedroom": 280,
+        "bedroom": 190, "living_room": 360, "dining_room": 170,
+    },
+    "over_2500": {
+        "kitchen": 240, "bathroom": 70, "master_bedroom": 320,
+        "bedroom": 210, "living_room": 420, "dining_room": 200,
+    },
+}
+
 
 @dataclass
 class Room:
@@ -91,11 +115,17 @@ For each room where you can READ dimension labels:
 - If area is shown directly (e.g., "14.8 m²"), use that value
 - Mark confidence as "high" for directly read values
 
-STEP 4 - ESTIMATE ONLY WHEN NECESSARY:
-For rooms WITHOUT visible dimension labels:
-- Use proportional comparison to rooms WITH labels
-- Mark confidence as "medium" for proportional estimates
-- Mark confidence as "low" only if no reference dimensions exist
+STEP 4 - ESTIMATE UNLABELED ROOMS:
+For rooms WITHOUT visible dimension labels, use these NAHB average sizes as fallback guidance based on the home's total estimated square footage:
+- Under 1,000 sq ft home: kitchen ~120 sq ft, bathroom ~40 sq ft
+- 1,000–1,500 sq ft home: kitchen ~150 sq ft, bathroom ~50 sq ft
+- 1,500–2,000 sq ft home: kitchen ~175 sq ft, bathroom ~55 sq ft
+- 2,000–2,500 sq ft home: kitchen ~200 sq ft, bathroom ~60 sq ft
+- Over 2,500 sq ft home: kitchen ~240 sq ft, bathroom ~70 sq ft
+Use these as starting points, then adjust up/down based on visual proportion relative to labeled rooms.
+- Mark confidence as "medium" for these NAHB-guided estimates
+- Mark confidence as "low" only if no reference dimensions or reasonable fallbacks exist
+- Add a warning noting the room was estimated using NAHB averages
 
 Please return a JSON object with the following structure:
 {

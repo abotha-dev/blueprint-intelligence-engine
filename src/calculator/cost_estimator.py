@@ -6,7 +6,7 @@ using current market pricing data.
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from enum import Enum
 from datetime import datetime
 
@@ -44,6 +44,8 @@ LABOR_AVAILABILITY_MULTIPLIERS = {
     LaborAvailability.AVERAGE: 1.00,  # No adjustment
     LaborAvailability.HIGH: 0.90,     # -10% labor cost (surplus)
 }
+
+MEP_MULTIPLIER = 0.25  # 25% of structural shell — midpoint of 22–28% NAHB range
 
 
 class RoomType(Enum):
@@ -107,6 +109,7 @@ class ProjectEstimate:
     contingency_amount: float = 0.0
     total_estimate: float = 0.0
     notes: List[str] = field(default_factory=list)
+    mep_breakdown: Optional[Dict[str, Union[float, str, List[str]]]] = None
 
 
 class PricingDatabase:
@@ -675,7 +678,8 @@ class CostEstimator:
         self,
         project_name: str,
         material_totals: Dict[str, MaterialQuantity],
-        selected_materials: Dict[str, QualityTier] = None
+        selected_materials: Dict[str, QualityTier] = None,
+        include_mep: bool = False
     ) -> ProjectEstimate:
         """
         Calculate complete cost estimate for a project.
@@ -708,6 +712,18 @@ class CostEstimator:
         subtotal = subtotal_materials + subtotal_labor
         contingency_amount = subtotal * self.contingency_percent
         total_estimate = subtotal + contingency_amount
+
+        mep_breakdown = None
+        if include_mep:
+            structural_shell_cost = subtotal_materials + subtotal_labor
+            mep_estimate = structural_shell_cost * MEP_MULTIPLIER
+            total_estimate += mep_estimate
+            mep_breakdown = {
+                "mep_estimate": round(mep_estimate, 2),
+                "mep_multiplier": MEP_MULTIPLIER,
+                "disclaimer": "Rough MEP estimate only (±30%). Actual costs vary significantly by complexity, local codes, and existing infrastructure.",
+                "includes": ["HVAC rough-in", "Electrical rough-in", "Plumbing rough-in"],
+            }
         
         return ProjectEstimate(
             project_name=project_name,
@@ -718,7 +734,8 @@ class CostEstimator:
             subtotal_labor=round(subtotal_labor, 2),
             contingency_percent=self.contingency_percent,
             contingency_amount=round(contingency_amount, 2),
-            total_estimate=round(total_estimate, 2)
+            total_estimate=round(total_estimate, 2),
+            mep_breakdown=mep_breakdown
         )
 
 
