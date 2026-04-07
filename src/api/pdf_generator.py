@@ -339,13 +339,22 @@ class PDFReportGenerator:
             dimensions = room.get('dimensions', {})
             width = dimensions.get('width', 0)
             length = dimensions.get('length', 0)
-            
+
+            # Convert metric dimensions to imperial for display (1 m = 3.28084 ft)
+            unit = room.get('unit', 'imperial')
+            if unit == 'metric' and (width > 0 or length > 0):
+                width = width * 3.28084
+                length = length * 3.28084
+
             if width > 0 and length > 0:
-                dim_str = f"{length:.0f}' × {width:.0f}'"
+                dim_str = f"{length:.1f}' × {width:.1f}'"
             else:
                 dim_str = 'Estimated'
-            
+
             area = room.get('area', 0)
+            # Convert metric area to sq ft for display
+            if unit == 'metric' and area > 0:
+                area = area * 10.7639
             confidence = room.get('confidence', 0.5)
             
             if confidence >= 0.8:
