@@ -773,3 +773,31 @@ def compare_quality_tiers(
         results[tier.value] = estimate.total_estimate
     
     return results
+
+
+def format_cost_report(estimate: ProjectEstimate) -> str:
+    """Render a readable plain-text cost summary for CLI/tests."""
+    lines = [
+        f"Project: {estimate.project_name}",
+        f"Region: {estimate.region.value if hasattr(estimate.region, 'value') else estimate.region}",
+        "",
+        "Cost Breakdown:",
+    ]
+
+    for item in estimate.estimates:
+        lines.extend([
+            f"- {item.display_name}:",
+            f"  Material: ${item.material_cost:,.2f}",
+            f"  Labor: ${item.labor_cost:,.2f}",
+            f"  Total: ${item.total_cost:,.2f}",
+        ])
+
+    lines.extend([
+        "",
+        f"Materials subtotal: ${estimate.subtotal_materials:,.2f}",
+        f"Labor subtotal: ${estimate.subtotal_labor:,.2f}",
+        f"Contingency ({estimate.contingency_percent:.0%}): ${estimate.contingency_amount:,.2f}",
+        f"Grand total: ${estimate.total_estimate:,.2f}",
+    ])
+
+    return "\n".join(lines)

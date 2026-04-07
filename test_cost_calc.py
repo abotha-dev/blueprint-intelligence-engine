@@ -114,7 +114,9 @@ print("-" * 50)
 
 comparisons = compare_quality_tiers(totals, Region.US_NATIONAL)
 for tier, est in comparisons.items():
-    print(f"  {tier.value.upper()}: ${est.total_estimate:,.2f}")
+    tier_name = tier.value.upper() if hasattr(tier, 'value') else str(tier).upper()
+    total = est.total_estimate if hasattr(est, 'total_estimate') else float(est)
+    print(f"  {tier_name}: ${total:,.2f}")
 
 print("\n" + "=" * 70)
 print("TEST COMPLETE!")
