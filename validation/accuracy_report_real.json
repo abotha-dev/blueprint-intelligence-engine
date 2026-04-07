@@ -1,0 +1,326 @@
+{
+  "aggregate": {
+    "blueprints_tested": 5,
+    "avg_detection_rate_pct": 100.0,
+    "avg_area_accuracy_pct": 96.7,
+    "confidence_distribution": {
+      "high": 32
+    }
+  },
+  "per_blueprint": [
+    {
+      "blueprint": "cedreo-apartment.webp",
+      "mode": "live",
+      "detection_rate_pct": 100.0,
+      "matched": 6,
+      "total_gt": 6,
+      "avg_area_error_pct": 0.1,
+      "avg_area_accuracy_pct": 99.9,
+      "confidence_dist": {
+        "high": 6
+      },
+      "matched_rooms": [
+        {
+          "name": "Living Room",
+          "gt_sqft": 108.0,
+          "parsed_sqft": 108.0,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Dining Room - Kitchen",
+          "gt_sqft": 121.9,
+          "parsed_sqft": 121.9,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Bedroom",
+          "gt_sqft": 69.75,
+          "parsed_sqft": 69.8,
+          "err_pct": 0.1,
+          "confidence": "high"
+        },
+        {
+          "name": "Office",
+          "gt_sqft": 6.67,
+          "parsed_sqft": 6.7,
+          "err_pct": 0.4,
+          "confidence": "high"
+        },
+        {
+          "name": "Entry",
+          "gt_sqft": 42.61,
+          "parsed_sqft": 42.6,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Bathroom",
+          "gt_sqft": 45.4,
+          "parsed_sqft": 45.4,
+          "err_pct": 0.0,
+          "confidence": "high"
+        }
+      ],
+      "missed_rooms": [],
+      "warnings": [
+        "Image enhancement applied: True (upscale:1200x675, contrast, sharpen)"
+      ]
+    },
+    {
+      "blueprint": "cedreo-container.webp",
+      "mode": "live",
+      "detection_rate_pct": 100.0,
+      "matched": 6,
+      "total_gt": 6,
+      "avg_area_error_pct": 16.4,
+      "avg_area_accuracy_pct": 83.6,
+      "confidence_dist": {
+        "high": 6
+      },
+      "matched_rooms": [
+        {
+          "name": "Bedroom",
+          "gt_sqft": 111.1,
+          "parsed_sqft": 120.1,
+          "err_pct": 8.1,
+          "confidence": "high"
+        },
+        {
+          "name": "Entry",
+          "gt_sqft": 41.79,
+          "parsed_sqft": 40.8,
+          "err_pct": 2.4,
+          "confidence": "high"
+        },
+        {
+          "name": "Office",
+          "gt_sqft": 100.69,
+          "parsed_sqft": 113.5,
+          "err_pct": 12.7,
+          "confidence": "high"
+        },
+        {
+          "name": "Kitchen",
+          "gt_sqft": 139.64,
+          "parsed_sqft": 140.6,
+          "err_pct": 0.7,
+          "confidence": "high"
+        },
+        {
+          "name": "Living Room",
+          "gt_sqft": 84.25,
+          "parsed_sqft": 100.0,
+          "err_pct": 18.7,
+          "confidence": "high"
+        },
+        {
+          "name": "Bathroom",
+          "gt_sqft": 54.08,
+          "parsed_sqft": 23.8,
+          "err_pct": 56.0,
+          "confidence": "high"
+        }
+      ],
+      "missed_rooms": [],
+      "warnings": [
+        "Image enhancement applied: True (upscale:1200x676, contrast, sharpen)"
+      ]
+    },
+    {
+      "blueprint": "rs-1bed-totalarea.png",
+      "mode": "live",
+      "detection_rate_pct": 100.0,
+      "matched": 6,
+      "total_gt": 6,
+      "avg_area_error_pct": 0.0,
+      "avg_area_accuracy_pct": 100.0,
+      "confidence_dist": {
+        "high": 6
+      },
+      "matched_rooms": [
+        {
+          "name": "Kitchen & Dining Area",
+          "gt_sqft": 159.3,
+          "parsed_sqft": 159.3,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Living Area",
+          "gt_sqft": 230.3,
+          "parsed_sqft": 230.3,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Bedroom",
+          "gt_sqft": 103.3,
+          "parsed_sqft": 103.3,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Bathroom",
+          "gt_sqft": 48.4,
+          "parsed_sqft": 48.4,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Entry Hall",
+          "gt_sqft": 66.7,
+          "parsed_sqft": 66.7,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Balcony",
+          "gt_sqft": 105.5,
+          "parsed_sqft": 105.5,
+          "err_pct": 0.0,
+          "confidence": "high"
+        }
+      ],
+      "missed_rooms": [],
+      "warnings": [
+        "Image enhancement applied: True (upscale:1200x840, contrast, sharpen)"
+      ]
+    },
+    {
+      "blueprint": "rs-2bed-areas.jpg",
+      "mode": "live",
+      "detection_rate_pct": 100.0,
+      "matched": 7,
+      "total_gt": 7,
+      "avg_area_error_pct": 0.0,
+      "avg_area_accuracy_pct": 100.0,
+      "confidence_dist": {
+        "high": 7
+      },
+      "matched_rooms": [
+        {
+          "name": "Kitchen / Dining",
+          "gt_sqft": 187.0,
+          "parsed_sqft": 187.0,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Living Room",
+          "gt_sqft": 245.0,
+          "parsed_sqft": 245.0,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Bedroom 1",
+          "gt_sqft": 174.0,
+          "parsed_sqft": 174.0,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Bedroom 2",
+          "gt_sqft": 122.0,
+          "parsed_sqft": 122.0,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Bathroom",
+          "gt_sqft": 126.0,
+          "parsed_sqft": 126.0,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Laundry",
+          "gt_sqft": 86.0,
+          "parsed_sqft": 86.0,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Hall",
+          "gt_sqft": 149.0,
+          "parsed_sqft": 149.0,
+          "err_pct": 0.0,
+          "confidence": "high"
+        }
+      ],
+      "missed_rooms": [],
+      "warnings": [
+        "Image enhancement applied: True (upscale:1200x900, sharpen)"
+      ]
+    },
+    {
+      "blueprint": "rs-3bed-labels.jpg",
+      "mode": "live",
+      "detection_rate_pct": 100.0,
+      "matched": 7,
+      "total_gt": 7,
+      "avg_area_error_pct": 0.0,
+      "avg_area_accuracy_pct": 100.0,
+      "confidence_dist": {
+        "high": 7
+      },
+      "matched_rooms": [
+        {
+          "name": "Kitchen",
+          "gt_sqft": 189.4,
+          "parsed_sqft": 189.4,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Living",
+          "gt_sqft": 349.7,
+          "parsed_sqft": 349.6,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Bedroom 1",
+          "gt_sqft": 183.6,
+          "parsed_sqft": 183.5,
+          "err_pct": 0.1,
+          "confidence": "high"
+        },
+        {
+          "name": "Bedroom 2",
+          "gt_sqft": 123.1,
+          "parsed_sqft": 123.1,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Bedroom 3",
+          "gt_sqft": 132.6,
+          "parsed_sqft": 132.6,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Bathroom",
+          "gt_sqft": 113.5,
+          "parsed_sqft": 113.5,
+          "err_pct": 0.0,
+          "confidence": "high"
+        },
+        {
+          "name": "Laundry",
+          "gt_sqft": 110.2,
+          "parsed_sqft": 110.2,
+          "err_pct": 0.0,
+          "confidence": "high"
+        }
+      ],
+      "missed_rooms": [],
+      "warnings": [
+        "Image enhancement applied: True (upscale:1200x892, contrast, sharpen)"
+      ]
+    }
+  ]
+}

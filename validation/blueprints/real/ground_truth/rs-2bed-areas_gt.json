@@ -1,0 +1,15 @@
+{
+  "source": "RoomSketcher/Nordic Homes '22 Seaview' — areas labeled in sq ft inside each room",
+  "units": "ft",
+  "total_area_sqft": 1089.0,
+  "total_area_sqm": 101.2,
+  "rooms": [
+    {"name": "Kitchen / Dining", "area_sqft": 187.0, "area_sqm": 17.4, "confidence_expected": "high"},
+    {"name": "Living Room", "area_sqft": 245.0, "area_sqm": 22.8, "confidence_expected": "high"},
+    {"name": "Bedroom 1", "area_sqft": 174.0, "area_sqm": 16.2, "confidence_expected": "high"},
+    {"name": "Bedroom 2", "area_sqft": 122.0, "area_sqm": 11.3, "confidence_expected": "high"},
+    {"name": "Bathroom", "area_sqft": 126.0, "area_sqm": 11.7, "confidence_expected": "high"},
+    {"name": "Laundry", "area_sqft": 86.0, "area_sqm": 8.0, "confidence_expected": "high"},
+    {"name": "Hall", "area_sqft": 149.0, "area_sqm": 13.8, "confidence_expected": "high"}
+  ]
+}

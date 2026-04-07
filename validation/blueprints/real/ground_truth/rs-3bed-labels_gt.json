@@ -1,0 +1,15 @@
+{
+  "source": "RoomSketcher blog example — room dimensions labeled inside each room in metric + imperial",
+  "units": "m",
+  "total_area_sqft": 1202.1,
+  "total_area_sqm": 111.67,
+  "rooms": [
+    {"name": "Kitchen", "area_sqft": 189.4, "area_sqm": 17.6, "width_m": 3.2, "length_m": 5.5, "confidence_expected": "high"},
+    {"name": "Living", "area_sqft": 349.7, "area_sqm": 32.48, "width_m": 5.8, "length_m": 5.6, "confidence_expected": "high"},
+    {"name": "Bedroom 1", "area_sqft": 183.6, "area_sqm": 17.05, "width_m": 5.5, "length_m": 3.1, "confidence_expected": "high"},
+    {"name": "Bedroom 2", "area_sqft": 123.1, "area_sqm": 11.44, "width_m": 2.6, "length_m": 4.4, "confidence_expected": "high"},
+    {"name": "Bedroom 3", "area_sqft": 132.6, "area_sqm": 12.32, "width_m": 2.8, "length_m": 4.4, "confidence_expected": "high"},
+    {"name": "Bathroom", "area_sqft": 113.5, "area_sqm": 10.54, "width_m": 3.4, "length_m": 3.1, "confidence_expected": "high"},
+    {"name": "Laundry", "area_sqft": 110.2, "area_sqm": 10.24, "width_m": 3.2, "length_m": 3.2, "confidence_expected": "high"}
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "source": "Cedreo 1-bedroom apartment example — areas labeled in ft² inside each room, dimension lines on perimeter",
+  "units": "ft",
+  "total_area_sqft": 401.54,
+  "total_area_sqm": 37.3,
+  "rooms": [
+    {"name": "Living Room", "area_sqft": 108.0, "area_sqm": 10.0, "confidence_expected": "high"},
+    {"name": "Dining Room - Kitchen", "area_sqft": 121.9, "area_sqm": 11.3, "confidence_expected": "high"},
+    {"name": "Bedroom", "area_sqft": 69.75, "area_sqm": 6.5, "confidence_expected": "high"},
+    {"name": "Office", "area_sqft": 6.67, "area_sqm": 0.6, "confidence_expected": "high"},
+    {"name": "Entry", "area_sqft": 42.61, "area_sqm": 4.0, "confidence_expected": "high"},
+    {"name": "Bathroom", "area_sqft": 45.4, "area_sqm": 4.2, "confidence_expected": "high"}
+  ],
+  "notes": "W.I.C (walk-in closet) at 7.21 ft² is omitted from room list as it may be counted as part of Bedroom"
+}

@@ -1,0 +1,14 @@
+{
+  "source": "RoomSketcher blog example — areas labeled in m² on plan, perimeter dims in meters, total area stated",
+  "units": "m",
+  "total_area_sqft": 764.2,
+  "total_area_sqm": 71.0,
+  "rooms": [
+    {"name": "Kitchen & Dining Area", "area_sqft": 159.3, "area_sqm": 14.8, "confidence_expected": "high"},
+    {"name": "Living Area", "area_sqft": 230.3, "area_sqm": 21.4, "confidence_expected": "high"},
+    {"name": "Bedroom", "area_sqft": 103.3, "area_sqm": 9.6, "confidence_expected": "high"},
+    {"name": "Bathroom", "area_sqft": 48.4, "area_sqm": 4.5, "confidence_expected": "high"},
+    {"name": "Entry Hall", "area_sqft": 66.7, "area_sqm": 6.2, "confidence_expected": "high"},
+    {"name": "Balcony", "area_sqft": 105.5, "area_sqm": 9.8, "confidence_expected": "high"}
+  ]
+}

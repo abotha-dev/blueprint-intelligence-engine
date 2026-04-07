@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Takeoff.ai Blueprint Parser Accuracy Validation
-Usage: python validation/run_accuracy_test.py [--mock]
+Usage: python validation/run_accuracy_test.py [--mock] [--dir real] [--two-pass] [--compare]
 """
 import argparse, json, math, re, statistics, sys
 from pathlib import Path
@@ -10,6 +10,7 @@ from collections import Counter
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+# Defaults — overridden by --dir flag
 BLUEPRINT_DIR = ROOT / "validation" / "blueprints"
 GT_DIR = BLUEPRINT_DIR / "ground_truth"
 REPORT_PATH = ROOT / "validation" / "accuracy_report.json"
@@ -65,9 +66,9 @@ def evaluate(image_path, gt, two_pass=False):
             idx = next((i for i,r in enumerate(remaining) if tgt in r["norm"] or r["norm"] in tgt), None)
         if idx is None: missed.append(g["name"]); continue
         p = remaining.pop(idx)
-        err = abs(p["area_sqft"] - g["area_sqft"]) / g["area_sqft"] * 100 if p["area_sqft"] else None
+        err = abs(p["area_sqft"] - g["area_sqft"]) / g["area_sqft"] * 100 if p["area_sqft"] is not None else None
         matched.append({"name": g["name"], "gt_sqft": g["area_sqft"],
-                         "parsed_sqft": p["area_sqft"], "err_pct": round(err,1) if err else None,
+                         "parsed_sqft": p["area_sqft"], "err_pct": round(err,1) if err is not None else None,
                          "confidence": p["confidence"]})
 
     det_rate = len(matched) / len(gt_rooms) * 100 if gt_rooms else 0
@@ -77,8 +78,8 @@ def evaluate(image_path, gt, two_pass=False):
     return {"blueprint": image_path.name, "mode": mode,
             "detection_rate_pct": round(det_rate, 1),
             "matched": len(matched), "total_gt": len(gt_rooms),
-            "avg_area_error_pct": round(avg_err, 1) if avg_err else None,
-            "avg_area_accuracy_pct": round(100 - avg_err, 1) if avg_err else None,
+            "avg_area_error_pct": round(avg_err, 1) if avg_err is not None else None,
+            "avg_area_accuracy_pct": round(100 - avg_err, 1) if avg_err is not None else None,
             "confidence_dist": dict(Counter(m["confidence"] for m in matched)),
             "matched_rooms": matched, "missed_rooms": missed,
             "warnings": analysis.get("warnings", [])}
@@ -121,7 +122,15 @@ def main():
     parser.add_argument("--two-pass", action="store_true", help="Use two-pass extraction (OCR + analysis)")
     parser.add_argument("--compare", action="store_true", help="Run both single-pass and two-pass, show delta")
     parser.add_argument("--check-preprocessing", action="store_true", help="Log preprocessing dimensions for each blueprint")
+    parser.add_argument("--dir", type=str, default=None, help="Subdirectory under validation/blueprints/ (e.g., 'real')")
     args = parser.parse_args()
+
+    global BLUEPRINT_DIR, GT_DIR, REPORT_PATH, SUMMARY_PATH
+    if args.dir:
+        BLUEPRINT_DIR = ROOT / "validation" / "blueprints" / args.dir
+        GT_DIR = BLUEPRINT_DIR / "ground_truth"
+        REPORT_PATH = ROOT / "validation" / f"accuracy_report_{args.dir}.json"
+        SUMMARY_PATH = ROOT / "validation" / f"ACCURACY_SUMMARY_{args.dir.upper()}.md"
 
     gt_files = list(GT_DIR.glob("*_gt.json"))
     if not gt_files:
@@ -131,7 +140,7 @@ def main():
     for gt_path in sorted(gt_files):
         stem = gt_path.stem.replace("_gt", "")
         img = next((p for p in BLUEPRINT_DIR.iterdir()
-                    if p.stem == stem and p.suffix in (".png",".jpg",".jpeg",".webp")), None)
+                    if p.stem == stem and p.suffix in (".png",".jpg",".jpeg",".webp",".gif")), None)
         if not img:
             print(f"  ⚠ No image for {stem}, skipping"); continue
         gt = json.loads(gt_path.read_text())
@@ -160,7 +169,7 @@ def main():
         print("No results."); sys.exit(1)
 
     det_rates = [r["detection_rate_pct"] for r in results]
-    acc_rates = [r["avg_area_accuracy_pct"] for r in results if r["avg_area_accuracy_pct"]]
+    acc_rates = [r["avg_area_accuracy_pct"] for r in results if r["avg_area_accuracy_pct"] is not None]
     all_conf = Counter()
     for r in results:
         all_conf.update(r["confidence_dist"])
