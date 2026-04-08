@@ -164,7 +164,8 @@ class PDFReportGenerator:
         total_area: float = 0,
         contingency_percent: float = 10,
         filename: str = 'blueprint.jpg',
-        labor_availability: str = 'average'
+        labor_availability: str = 'average',
+        structural_estimates: Optional[Dict[str, Any]] = None,
     ) -> BytesIO:
         """
         Generate a PDF report for the construction estimate.
@@ -182,14 +183,19 @@ class PDFReportGenerator:
             bottomMargin=0.6 * inch,
         )
 
+        # Calculate combined grand total (interior + structural)
+        interior_total = cost_breakdown.get('grand_total', 0)
+        structural_total = structural_estimates.get('grand_total', 0) if structural_estimates else 0
+        combined_grand_total = interior_total + structural_total
+
         story = []
 
         # -- Header --
         story.extend(self._build_header(project_name, filename, selected_tier))
 
-        # -- Grand-total callout --
+        # -- Grand-total callout (combined total) --
         story.extend(self._build_grand_total_box(
-            grand_total=cost_breakdown.get('grand_total', 0),
+            grand_total=combined_grand_total,
             room_count=len(rooms),
             total_area=total_area,
             selected_tier=selected_tier,
@@ -207,8 +213,16 @@ class PDFReportGenerator:
         # -- Room Breakdown --
         story.extend(self._build_room_breakdown(rooms))
 
-        # -- Cost Estimate Table --
-        story.extend(self._build_cost_table(materials, cost_breakdown, contingency_percent))
+        # -- Cost Estimate Table (interior finishes) --
+        story.extend(self._build_cost_table(
+            materials, cost_breakdown, contingency_percent,
+            structural_total=structural_total,
+            combined_grand_total=combined_grand_total,
+        ))
+
+        # -- Structural Shell Estimate --
+        if structural_estimates and structural_total > 0:
+            story.extend(self._build_structural_estimates(structural_estimates))
 
         # -- Quality Tier Comparison --
         story.extend(self._build_tier_comparison(tier_comparisons, selected_tier))
@@ -527,6 +541,8 @@ class PDFReportGenerator:
         materials: List[Dict[str, Any]],
         cost_breakdown: Dict[str, float],
         contingency_percent: float,
+        structural_total: float = 0,
+        combined_grand_total: float = 0,
     ) -> List:
         """Build the itemized cost estimate table with category grouping and summary totals."""
         elements = self._section_heading(
@@ -608,17 +624,22 @@ class PDFReportGenerator:
         labor_sub = cost_breakdown.get('labor_subtotal', 0)
         subtotal = cost_breakdown.get('subtotal', 0)
         contingency = cost_breakdown.get('contingency_amount', 0)
-        grand_total = cost_breakdown.get('grand_total', 0)
+        interior_total = cost_breakdown.get('grand_total', 0)
 
-        summary_rows = [
-            ('Materials Subtotal', self._format_currency(materials_sub), False),
-            ('Labor Subtotal', self._format_currency(labor_sub), False),
-            ('Subtotal', self._format_currency(subtotal), False),
-            (f'Contingency ({contingency_percent:.0f}%)', self._format_currency(contingency), False),
-            ('Grand Total', self._format_currency(grand_total), True),
+        summary_data = [
+            ['Materials Subtotal', self._format_currency(materials_sub)],
+            ['Labor Subtotal', self._format_currency(labor_sub)],
+            ['Subtotal', self._format_currency(subtotal)],
+            [f'Contingency ({contingency_percent:.0f}%)', self._format_currency(contingency)],
         ]
 
-        summary_data = [[label, val] for label, val, _ in summary_rows]
+        if structural_total > 0:
+            summary_data.append(['Interior Finishes Total', self._format_currency(interior_total)])
+            summary_data.append(['Structural Shell', self._format_currency(structural_total)])
+            summary_data.append(['Grand Total', self._format_currency(combined_grand_total)])
+        else:
+            summary_data.append(['Grand Total', self._format_currency(interior_total)])
+
         summary = Table(summary_data, colWidths=[2 * inch, 1.5 * inch])
 
         summary_style = [
@@ -648,6 +669,85 @@ class PDFReportGenerator:
         wrapper.setStyle(TableStyle([('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         elements.append(wrapper)
         elements.append(Spacer(1, 12))
+        return elements
+
+    def _build_structural_estimates(self, structural: Dict[str, Any]) -> List:
+        """Build the structural shell estimate section (framing, foundation, roofing)."""
+        elements = self._section_heading(
+            'Structural Shell Estimate',
+            'Framing, foundation, and roofing costs based on NAHB 2024 benchmarks.'
+        )
+
+        sections = [
+            ('Framing', 'Studs, plates, headers', structural.get('framing', {})),
+            ('Foundation', 'Slab-on-grade', structural.get('foundation', {})),
+            ('Roofing', 'Gable roof, 4/12 pitch', structural.get('roofing', {})),
+        ]
+
+        # Build a table for each structural sub-section side by side
+        for section_name, subtitle, detail in sections:
+            line_items = detail.get('line_items', {})
+            total_mat = detail.get('total_material', 0)
+            total_lab = detail.get('total_labor', 0)
+            grand = detail.get('grand_total', 0)
+
+            header = [f'{section_name}', '']
+            data = [header]
+            data.append([Paragraph(f'<font size="7" color="#6B7280"><i>{subtitle}</i></font>', self.styles['SmallText']), ''])
+
+            for key, item in line_items.items():
+                label = key.replace('_', ' ').capitalize()
+                cost = item.get('total_cost', 0) if isinstance(item, dict) else 0
+                data.append([f'  {label}', self._format_currency(cost)])
+
+            data.append(['Materials', self._format_currency(total_mat)])
+            data.append(['Labor', self._format_currency(total_lab)])
+            data.append(['Total', self._format_currency(grand)])
+
+            t = Table(data, colWidths=[2.5 * inch, 1.5 * inch])
+            last = len(data) - 1
+            t.setStyle(TableStyle([
+                # Header
+                ('FONTNAME', (0, 0), (0, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, -1), 8),
+                ('TEXTCOLOR', (0, 0), (-1, -1), self.TEXT_SECONDARY),
+                ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+                ('TOPPADDING', (0, 0), (-1, -1), 3),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+                ('LEFTPADDING', (0, 0), (-1, -1), 6),
+                ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+                # Total row
+                ('LINEABOVE', (0, last), (-1, last), 0.5, self.BORDER),
+                ('FONTNAME', (0, last), (-1, last), 'Helvetica-Bold'),
+                # Box
+                ('BOX', (0, 0), (-1, -1), 0.5, self.BORDER_LIGHT),
+            ]))
+            elements.append(t)
+            elements.append(Spacer(1, 6))
+
+        # Structural grand total
+        struct_total = structural.get('grand_total', 0)
+        total_row = Table(
+            [['Structural Shell Total', self._format_currency(struct_total)]],
+            colWidths=[2.5 * inch, 1.5 * inch],
+        )
+        total_row.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (0, 0), 'RIGHT'),
+            ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('TEXTCOLOR', (0, 0), (0, 0), self.TEXT_PRIMARY),
+            ('TEXTCOLOR', (1, 0), (1, 0), self.BRAND_BLUE),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LINEABOVE', (0, 0), (-1, 0), 1, self.BORDER),
+        ]))
+
+        wrapper = Table([[total_row]], colWidths=[7 * inch])
+        wrapper.setStyle(TableStyle([('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+        elements.append(wrapper)
+        elements.append(Spacer(1, 12))
+
         return elements
 
     def _build_tier_comparison(

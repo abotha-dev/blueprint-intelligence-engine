@@ -284,6 +284,32 @@ class TierComparisonInput(BaseModel):
     grand_total: float
 
 
+class StructuralLineItemInput(BaseModel):
+    material_cost: float = 0
+    labor_cost: float = 0
+    total_cost: float = 0
+
+
+class StructuralDetailInput(BaseModel):
+    line_items: Dict[str, StructuralLineItemInput] = {}
+    total_material: float = 0
+    total_labor: float = 0
+    grand_total: float = 0
+
+
+class RoofingDetailInput(StructuralDetailInput):
+    roof_area_sqft: Optional[float] = None
+
+
+class StructuralEstimatesInput(BaseModel):
+    framing: StructuralDetailInput
+    foundation: StructuralDetailInput
+    roofing: RoofingDetailInput
+    subtotal_material: float = 0
+    subtotal_labor: float = 0
+    grand_total: float = 0
+
+
 class PDFReportRequest(BaseModel):
     project_name: str = "Construction Estimate"
     filename: str = "blueprint.jpg"
@@ -298,6 +324,7 @@ class PDFReportRequest(BaseModel):
     total_area: float = 0
     contingency_percent: float = 10
     labor_availability: str = "average"
+    structural_estimates: Optional[StructuralEstimatesInput] = None
 
 
 # ============================================================================
@@ -813,6 +840,11 @@ async def generate_pdf_report(request: PDFReportRequest):
         cost_breakdown = request.cost_breakdown.dict()
         tier_comparisons = [tier.dict() for tier in request.tier_comparisons]
         
+        # Structural estimates (optional)
+        structural_estimates = None
+        if request.structural_estimates:
+            structural_estimates = request.structural_estimates.dict()
+
         # Generate PDF
         pdf_buffer = pdf_generator.generate_report(
             project_name=request.project_name,
@@ -827,7 +859,8 @@ async def generate_pdf_report(request: PDFReportRequest):
             total_area=request.total_area,
             contingency_percent=request.contingency_percent,
             filename=request.filename,
-            labor_availability=request.labor_availability
+            labor_availability=request.labor_availability,
+            structural_estimates=structural_estimates,
         )
         
         # Create filename for download
