@@ -408,26 +408,49 @@ Return ONLY the JSON object, no additional text."""
                     model_used=f"{self.provider}:{self.model}"
                 )
             
-            # Sanity-check unit system against total area to catch metric/imperial confusion.
-            # A residential floor plan total area: metric=50–300 m², imperial=500–3500 sq ft.
-            # If total_area is in the 50–300 range and unit_system is imperial, it's almost
-            # certainly metric (e.g. model returns 110 "sq ft" for a 110 m² plan).
+            # Sanity-check unit system against room areas to catch metric/imperial confusion.
+            # Use individual room areas (not just total) for a stronger signal:
+            #   Metric rooms: typically 5–30 m² each
+            #   Imperial rooms: typically 50–300 sq ft each
+            # Only correct if room areas clearly look metric (avg < 30, max < 50).
             unit_system = data.get("unit_system", "unknown")
             try:
                 reported_total = float(str(data.get("total_area", "") or "").replace(",", ""))
-                if unit_system == "imperial" and 40 <= reported_total <= 400:
-                    logger.warning(
-                        "Unit sanity check: model said imperial but total_area=%.0f looks metric. "
-                        "Correcting to metric.", reported_total
-                    )
-                    unit_system = "metric"
-                    data["unit_system"] = "metric"
-                    warnings_override = list(data.get("warnings", []))
-                    warnings_override.append(
-                        f"Unit system corrected imperial→metric: reported total {reported_total:.0f} "
-                        "is consistent with m², not sq ft"
-                    )
-                    data["warnings"] = warnings_override
+                if unit_system == "imperial" and reported_total > 0:
+                    # Gather individual room areas for a more reliable check
+                    room_areas = []
+                    for r in data.get("rooms", []):
+                        try:
+                            a = float(str(r.get("area", "") or "").replace(",", ""))
+                            if a > 0:
+                                room_areas.append(a)
+                        except (ValueError, TypeError):
+                            pass
+
+                    avg_room = (sum(room_areas) / len(room_areas)) if room_areas else 0
+                    max_room = max(room_areas) if room_areas else 0
+
+                    # Only correct to metric when room sizes clearly look like m²
+                    # (avg under 30 and no single room over 50)
+                    if avg_room > 0 and avg_room < 30 and max_room < 50:
+                        logger.warning(
+                            "Unit sanity check: model said imperial but avg room area=%.1f, "
+                            "max=%.1f — looks metric. Correcting.", avg_room, max_room
+                        )
+                        unit_system = "metric"
+                        data["unit_system"] = "metric"
+                        warnings_override = list(data.get("warnings", []))
+                        warnings_override.append(
+                            f"Unit system corrected imperial→metric: avg room area {avg_room:.1f} "
+                            f"and max {max_room:.1f} are consistent with m², not sq ft"
+                        )
+                        data["warnings"] = warnings_override
+                    elif reported_total <= 400:
+                        logger.info(
+                            "Unit sanity check: total=%.0f is small but avg room=%.1f, "
+                            "max=%.1f — keeping imperial (small apartment).",
+                            reported_total, avg_room, max_room
+                        )
             except (ValueError, TypeError):
                 pass
 
