@@ -1,7 +1,7 @@
 """
 PDF Report Generator for Takeoff.ai
 
-Generates professional PDF estimates for construction projects.
+Generates professional, print-friendly PDF estimates for construction projects.
 """
 
 from io import BytesIO
@@ -14,78 +14,142 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-    PageBreak, Image, HRFlowable
+    PageBreak, HRFlowable
 )
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 
 
 class PDFReportGenerator:
-    """Generates professional PDF reports for construction estimates."""
-    
-    # Brand colors
-    PRIMARY_COLOR = colors.HexColor('#10B981')  # Green
-    SECONDARY_COLOR = colors.HexColor('#1F2937')  # Dark gray
-    LIGHT_GRAY = colors.HexColor('#F3F4F6')
-    BORDER_COLOR = colors.HexColor('#E5E7EB')
-    
+    """Generates professional, print-friendly PDF reports for construction estimates."""
+
+    # Brand colors — blue palette matching the web app
+    BRAND_BLUE = colors.HexColor('#4F6DF5')
+    BRAND_BLUE_DARK = colors.HexColor('#3B50C4')
+    BRAND_BLUE_LIGHT = colors.HexColor('#EEF1FE')    # Very light tint for table rows (prints well)
+    BRAND_BLUE_MID = colors.HexColor('#D4DBFC')       # Medium tint for header rows
+
+    # Neutrals — high contrast for print
+    TEXT_PRIMARY = colors.HexColor('#111827')
+    TEXT_SECONDARY = colors.HexColor('#374151')
+    TEXT_MUTED = colors.HexColor('#6B7280')
+    BORDER = colors.HexColor('#D1D5DB')
+    BORDER_LIGHT = colors.HexColor('#E5E7EB')
+    ROW_ALT = colors.HexColor('#F9FAFB')
+    WHITE = colors.white
+
     def __init__(self):
         self.styles = getSampleStyleSheet()
         self._setup_custom_styles()
-    
+
     def _setup_custom_styles(self):
-        """Setup custom paragraph styles."""
+        """Setup custom paragraph styles for the report."""
+        self.styles.add(ParagraphStyle(
+            name='BrandName',
+            fontSize=22,
+            fontName='Helvetica-Bold',
+            textColor=self.BRAND_BLUE,
+            spaceAfter=2,
+            leading=26,
+        ))
+
+        self.styles.add(ParagraphStyle(
+            name='BrandTagline',
+            fontSize=9,
+            fontName='Helvetica',
+            textColor=self.TEXT_MUTED,
+            spaceAfter=0,
+            leading=12,
+        ))
+
         self.styles.add(ParagraphStyle(
             name='ReportTitle',
             parent=self.styles['Heading1'],
-            fontSize=24,
-            textColor=self.SECONDARY_COLOR,
-            spaceAfter=20,
-            alignment=TA_LEFT
+            fontSize=20,
+            fontName='Helvetica-Bold',
+            textColor=self.TEXT_PRIMARY,
+            spaceBefore=0,
+            spaceAfter=4,
+            leading=24,
         ))
-        
+
         self.styles.add(ParagraphStyle(
-            name='ReportSection',
-            parent=self.styles['Heading2'],
-            fontSize=14,
-            textColor=self.SECONDARY_COLOR,
-            spaceBefore=20,
-            spaceAfter=10,
-            borderPadding=5
+            name='ReportSubtitle',
+            fontSize=10,
+            fontName='Helvetica',
+            textColor=self.TEXT_MUTED,
+            spaceAfter=16,
+            leading=14,
         ))
-        
+
         self.styles.add(ParagraphStyle(
-            name='ReportSubHeader',
-            parent=self.styles['Heading3'],
-            fontSize=11,
-            textColor=self.SECONDARY_COLOR,
-            spaceBefore=10,
-            spaceAfter=5
+            name='SectionHeading',
+            fontSize=13,
+            fontName='Helvetica-Bold',
+            textColor=self.TEXT_PRIMARY,
+            spaceBefore=22,
+            spaceAfter=8,
+            leading=16,
+            borderPadding=(0, 0, 0, 4),
         ))
-        
+
+        self.styles.add(ParagraphStyle(
+            name='SectionDesc',
+            fontSize=9,
+            fontName='Helvetica',
+            textColor=self.TEXT_MUTED,
+            spaceAfter=8,
+            leading=12,
+        ))
+
         self.styles.add(ParagraphStyle(
             name='ReportBody',
-            parent=self.styles['Normal'],
             fontSize=10,
-            textColor=self.SECONDARY_COLOR,
-            spaceAfter=6
+            fontName='Helvetica',
+            textColor=self.TEXT_SECONDARY,
+            spaceAfter=4,
+            leading=14,
         ))
-        
+
         self.styles.add(ParagraphStyle(
-            name='ReportSmall',
-            parent=self.styles['Normal'],
+            name='SmallText',
             fontSize=8,
-            textColor=colors.gray,
-            spaceAfter=4
+            fontName='Helvetica',
+            textColor=self.TEXT_MUTED,
+            spaceAfter=3,
+            leading=11,
         ))
-        
+
         self.styles.add(ParagraphStyle(
-            name='ReportFooter',
-            parent=self.styles['Normal'],
+            name='FooterText',
             fontSize=8,
-            textColor=colors.gray,
-            alignment=TA_CENTER
+            fontName='Helvetica',
+            textColor=self.TEXT_MUTED,
+            alignment=TA_CENTER,
+            leading=11,
         ))
-    
+
+        self.styles.add(ParagraphStyle(
+            name='GrandTotalLabel',
+            fontSize=10,
+            fontName='Helvetica',
+            textColor=self.TEXT_MUTED,
+            alignment=TA_RIGHT,
+            leading=13,
+        ))
+
+        self.styles.add(ParagraphStyle(
+            name='GrandTotalValue',
+            fontSize=20,
+            fontName='Helvetica-Bold',
+            textColor=self.BRAND_BLUE,
+            alignment=TA_RIGHT,
+            leading=26,
+        ))
+
+    def _format_currency(self, value: float) -> str:
+        """Format a number as USD currency."""
+        return f"${value:,.2f}"
+
     def generate_report(
         self,
         project_name: str,
@@ -104,518 +168,583 @@ class PDFReportGenerator:
     ) -> BytesIO:
         """
         Generate a PDF report for the construction estimate.
-        
+
         Returns: BytesIO buffer containing the PDF
         """
         buffer = BytesIO()
-        
+
         doc = SimpleDocTemplate(
             buffer,
             pagesize=letter,
-            rightMargin=0.75*inch,
-            leftMargin=0.75*inch,
-            topMargin=0.75*inch,
-            bottomMargin=0.75*inch
+            rightMargin=0.75 * inch,
+            leftMargin=0.75 * inch,
+            topMargin=0.6 * inch,
+            bottomMargin=0.6 * inch,
         )
-        
+
         story = []
-        
-        # Header
-        story.extend(self._build_header(project_name, filename))
-        
-        # Analysis Settings
+
+        # -- Header --
+        story.extend(self._build_header(project_name, filename, selected_tier))
+
+        # -- Grand-total callout --
+        story.extend(self._build_grand_total_box(
+            grand_total=cost_breakdown.get('grand_total', 0),
+            room_count=len(rooms),
+            total_area=total_area,
+            selected_tier=selected_tier,
+        ))
+
+        # -- Analysis Settings --
         story.extend(self._build_analysis_settings(
             quality_tier=quality_tier,
             region=region,
             include_labor=include_labor,
             contingency_percent=contingency_percent,
-            labor_availability=labor_availability
+            labor_availability=labor_availability,
         ))
-        
-        # Project Summary
-        story.extend(self._build_summary(
-            total_area=total_area,
-            room_count=len(rooms),
-            selected_tier=selected_tier,
-            grand_total=cost_breakdown.get('grand_total', 0)
-        ))
-        
-        # Room Breakdown
+
+        # -- Room Breakdown --
         story.extend(self._build_room_breakdown(rooms))
-        
-        # Cost Estimate Table
+
+        # -- Cost Estimate Table --
         story.extend(self._build_cost_table(materials, cost_breakdown, contingency_percent))
-        
-        # Quality Tier Comparison
+
+        # -- Quality Tier Comparison --
         story.extend(self._build_tier_comparison(tier_comparisons, selected_tier))
-        
-        # Footer/Disclaimer
+
+        # -- Disclaimer & Footer --
         story.extend(self._build_footer())
-        
-        doc.build(story)
+
+        # Build with page-number footer
+        doc.build(story, onFirstPage=self._page_footer, onLaterPages=self._page_footer)
         buffer.seek(0)
         return buffer
-    
-    def _build_header(self, project_name: str, filename: str) -> List:
-        """Build the report header."""
+
+    # ------------------------------------------------------------------
+    # Page-level callback: adds page number footer on every page
+    # ------------------------------------------------------------------
+    def _page_footer(self, canvas, doc):
+        """Draw page number at bottom-center of every page."""
+        canvas.saveState()
+        canvas.setFont('Helvetica', 8)
+        canvas.setFillColor(self.TEXT_MUTED)
+        page_num = canvas.getPageNumber()
+        canvas.drawCentredString(
+            doc.pagesize[0] / 2.0,
+            0.4 * inch,
+            f"Page {page_num}"
+        )
+        canvas.restoreState()
+
+    # ------------------------------------------------------------------
+    # Section builders
+    # ------------------------------------------------------------------
+
+    def _build_header(self, project_name: str, filename: str, selected_tier: str) -> List:
+        """Build the branded report header."""
         elements = []
-        
-        # Logo/Brand
-        elements.append(Paragraph(
-            '<font color="#10B981"><b>Takeoff.ai</b></font>',
-            ParagraphStyle(
-                name='Brand',
-                fontSize=20,
-                textColor=self.PRIMARY_COLOR,
-                spaceAfter=5
-            )
-        ))
-        
-        elements.append(Paragraph(
-            'AI-Powered Construction Estimator',
-            self.styles['ReportSmall']
-        ))
-        
-        elements.append(Spacer(1, 20))
-        
-        # Title
-        elements.append(Paragraph(
-            f'<b>Construction Cost Estimate</b>',
-            self.styles['ReportTitle']
-        ))
-        
-        # Project info
-        elements.append(Paragraph(
-            f'<b>Project:</b> {project_name}',
-            self.styles['ReportBody']
-        ))
-        
-        elements.append(Paragraph(
-            f'<b>Source File:</b> {filename}',
-            self.styles['ReportBody']
-        ))
-        
-        elements.append(Paragraph(
-            f'<b>Generated:</b> {datetime.now().strftime("%B %d, %Y at %I:%M %p")}',
-            self.styles['ReportBody']
-        ))
-        
+
+        # Two-column header: brand on left, date on right
+        tier_label = selected_tier.capitalize()
+        date_str = datetime.now().strftime("%B %d, %Y")
+
+        left_col = [
+            [Paragraph('<b>Takeoff.ai</b>', self.styles['BrandName'])],
+            [Paragraph('AI-Powered Construction Estimator', self.styles['BrandTagline'])],
+        ]
+        left_table = Table(left_col, colWidths=[4 * inch])
+        left_table.setStyle(TableStyle([
+            ('LEFTPADDING', (0, 0), (-1, -1), 0),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+            ('TOPPADDING', (0, 0), (-1, -1), 0),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 1),
+        ]))
+
+        right_col = [
+            [Paragraph(f'<font size="9" color="#6B7280">{date_str}</font>', self.styles['ReportBody'])],
+            [Paragraph(f'<font size="9" color="#6B7280">{tier_label} Tier</font>', self.styles['ReportBody'])],
+        ]
+        right_table = Table(right_col, colWidths=[3 * inch])
+        right_table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'RIGHT'),
+            ('LEFTPADDING', (0, 0), (-1, -1), 0),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+            ('TOPPADDING', (0, 0), (-1, -1), 0),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 1),
+        ]))
+
+        header_table = Table([[left_table, right_table]], colWidths=[4 * inch, 3 * inch])
+        header_table.setStyle(TableStyle([
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('LEFTPADDING', (0, 0), (-1, -1), 0),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+            ('TOPPADDING', (0, 0), (-1, -1), 0),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+        ]))
+
+        elements.append(header_table)
         elements.append(Spacer(1, 10))
+
+        # Blue accent line
         elements.append(HRFlowable(
-            width="100%",
-            thickness=1,
-            color=self.BORDER_COLOR,
-            spaceAfter=20
+            width="100%", thickness=2, color=self.BRAND_BLUE, spaceAfter=14
         ))
-        
+
+        # Title and project info
+        elements.append(Paragraph('Construction Cost Estimate', self.styles['ReportTitle']))
+        elements.append(Paragraph(
+            f'{project_name}  ·  Source: {filename}',
+            self.styles['ReportSubtitle'],
+        ))
+
         return elements
-    
+
+    def _build_grand_total_box(
+        self,
+        grand_total: float,
+        room_count: int,
+        total_area: float,
+        selected_tier: str,
+    ) -> List:
+        """Build a prominent grand-total callout box with a border — no heavy fill so it prints cleanly."""
+        elements = []
+
+        tier_label = selected_tier.capitalize()
+        meta_text = f"{room_count} room{'s' if room_count != 1 else ''}  ·  {total_area:,.0f} sq ft  ·  {tier_label} tier"
+
+        box_data = [[
+            Paragraph(f'<font size="9" color="#6B7280">Estimated Grand Total</font>', self.styles['ReportBody']),
+            '',
+        ], [
+            Paragraph(f'<b>{self._format_currency(grand_total)}</b>', ParagraphStyle(
+                name='_gt_val',
+                fontSize=22,
+                fontName='Helvetica-Bold',
+                textColor=self.BRAND_BLUE,
+                leading=28,
+            )),
+            Paragraph(f'<font size="9" color="#6B7280">{meta_text}</font>', ParagraphStyle(
+                name='_gt_meta',
+                fontSize=9,
+                fontName='Helvetica',
+                textColor=self.TEXT_MUTED,
+                alignment=TA_RIGHT,
+                leading=12,
+            )),
+        ]]
+
+        box = Table(box_data, colWidths=[3.5 * inch, 3.5 * inch])
+        box.setStyle(TableStyle([
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('SPAN', (0, 0), (1, 0)),
+            ('LEFTPADDING', (0, 0), (-1, -1), 14),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 14),
+            ('TOPPADDING', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 2),
+            ('TOPPADDING', (0, 1), (-1, 1), 2),
+            ('BOTTOMPADDING', (0, 1), (-1, 1), 12),
+            ('BOX', (0, 0), (-1, -1), 1.5, self.BRAND_BLUE),
+            ('BACKGROUND', (0, 0), (-1, -1), self.BRAND_BLUE_LIGHT),
+        ]))
+
+        elements.append(box)
+        elements.append(Spacer(1, 18))
+
+        return elements
+
+    def _section_heading(self, title: str, description: str = '') -> List:
+        """Return a section heading with optional description."""
+        elements = []
+
+        # Blue left-accent bar via a small table
+        accent_data = [[
+            '',
+            Paragraph(f'<b>{title}</b>', self.styles['SectionHeading']),
+        ]]
+        accent = Table(accent_data, colWidths=[4, 6.9 * inch])
+        accent.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (0, 0), self.BRAND_BLUE),
+            ('LEFTPADDING', (0, 0), (0, 0), 0),
+            ('RIGHTPADDING', (0, 0), (0, 0), 0),
+            ('TOPPADDING', (0, 0), (0, 0), 0),
+            ('BOTTOMPADDING', (0, 0), (0, 0), 0),
+            ('LEFTPADDING', (1, 0), (1, 0), 8),
+            ('TOPPADDING', (1, 0), (1, 0), 0),
+            ('BOTTOMPADDING', (1, 0), (1, 0), 0),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        elements.append(Spacer(1, 16))
+        elements.append(accent)
+
+        if description:
+            elements.append(Paragraph(description, self.styles['SectionDesc']))
+
+        elements.append(Spacer(1, 4))
+        return elements
+
     def _build_analysis_settings(
         self,
         quality_tier: str,
         region: str,
         include_labor: bool,
         contingency_percent: float,
-        labor_availability: str
+        labor_availability: str,
     ) -> List:
-        """Build the analysis settings section."""
-        elements = []
-        
-        elements.append(Paragraph('Analysis Settings', self.styles['ReportSection']))
-        
-        # Format quality tier
-        tier_labels = {
-            'budget': 'Budget',
-            'standard': 'Standard',
-            'premium': 'Premium',
-            'luxury': 'Luxury'
-        }
-        
-        # Format region
-        def format_region(region_str):
-            if not region_str.startswith('us_'):
-                return region_str  # State name
-            region_map = {
-                'us_national': 'National Average',
-                'us_northeast': 'Northeast',
-                'us_southeast': 'Southeast',
-                'us_midwest': 'Midwest',
-                'us_southwest': 'Southwest',
-                'us_west': 'West',
+        """Build the analysis settings as a compact two-column grid."""
+        elements = self._section_heading('Analysis Settings', 'Parameters used for this estimate.')
+
+        tier_labels = {'budget': 'Budget', 'standard': 'Standard', 'premium': 'Premium', 'luxury': 'Luxury'}
+        labor_labels = {'low': 'Low (Shortage +15%)', 'average': 'Average', 'high': 'High (Surplus -10%)'}
+
+        def fmt_region(r):
+            if not r.startswith('us_'):
+                return r
+            m = {
+                'us_national': 'National Average', 'us_northeast': 'Northeast',
+                'us_southeast': 'Southeast', 'us_midwest': 'Midwest',
+                'us_southwest': 'Southwest', 'us_west': 'West',
             }
-            return region_map.get(region_str, region_str)
-        
-        # Format labor availability
-        labor_labels = {
-            'low': 'Low (Shortage +15%)',
-            'average': 'Average',
-            'high': 'High (Surplus -10%)'
-        }
-        
-        settings_data = [
-            ['Quality Tier', tier_labels.get(quality_tier, 'Standard')],
-            ['Location', format_region(region)],
-            ['Labor Availability', labor_labels.get(labor_availability, 'Average')],
-            ['Labor Costs', 'Included' if include_labor else 'Not Included'],
-            ['Contingency', f'{contingency_percent}%'],
+            return m.get(r, r)
+
+        # Two-column key-value pairs
+        pairs = [
+            ('Quality Tier', tier_labels.get(quality_tier, quality_tier.capitalize())),
+            ('Location', fmt_region(region)),
+            ('Labor Availability', labor_labels.get(labor_availability, labor_availability.capitalize())),
+            ('Labor Costs', 'Included' if include_labor else 'Not Included'),
+            ('Contingency', f'{contingency_percent:.0f}%'),
         ]
-        
-        table = Table(settings_data, colWidths=[2*inch, 3*inch])
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (0, -1), self.LIGHT_GRAY),
-            ('TEXTCOLOR', (0, 0), (-1, -1), self.SECONDARY_COLOR),
-            ('ALIGN', (0, 0), (0, -1), 'LEFT'),
-            ('ALIGN', (1, 0), (1, -1), 'LEFT'),
-            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-            ('TOPPADDING', (0, 0), (-1, -1), 8),
-            ('GRID', (0, 0), (-1, -1), 0.5, self.BORDER_COLOR),
+
+        # Lay out as a 2-col × N-row grid
+        rows = []
+        for i in range(0, len(pairs), 2):
+            left_label, left_val = pairs[i]
+            row = [
+                Paragraph(f'<font size="8" color="#6B7280">{left_label}</font>', self.styles['SmallText']),
+                Paragraph(f'<font size="9"><b>{left_val}</b></font>', self.styles['ReportBody']),
+            ]
+            if i + 1 < len(pairs):
+                right_label, right_val = pairs[i + 1]
+                row.extend([
+                    Paragraph(f'<font size="8" color="#6B7280">{right_label}</font>', self.styles['SmallText']),
+                    Paragraph(f'<font size="9"><b>{right_val}</b></font>', self.styles['ReportBody']),
+                ])
+            else:
+                row.extend(['', ''])
+            rows.append(row)
+
+        t = Table(rows, colWidths=[1.2 * inch, 2.3 * inch, 1.2 * inch, 2.3 * inch])
+        t.setStyle(TableStyle([
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+            ('LEFTPADDING', (0, 0), (-1, -1), 6),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+            ('LINEBELOW', (0, 0), (-1, -2), 0.5, self.BORDER_LIGHT),
+            ('LINEBELOW', (0, -1), (-1, -1), 0.5, self.BORDER_LIGHT),
         ]))
-        
-        elements.append(table)
-        elements.append(Spacer(1, 20))
-        
+
+        elements.append(t)
+        elements.append(Spacer(1, 8))
         return elements
-    
-    def _build_summary(
-        self,
-        total_area: float,
-        room_count: int,
-        selected_tier: str,
-        grand_total: float
-    ) -> List:
-        """Build the project summary section."""
-        elements = []
-        
-        elements.append(Paragraph('Project Summary', self.styles['ReportSection']))
-        
-        tier_labels = {
-            'budget': 'Budget',
-            'standard': 'Standard',
-            'premium': 'Premium',
-            'luxury': 'Luxury'
-        }
-        
-        summary_data = [
-            ['Total Area', f'{total_area:,.0f} sq ft'],
-            ['Rooms Detected', str(room_count)],
-            ['Quality Tier', tier_labels.get(selected_tier, 'Standard')],
-            ['Estimated Total', f'${grand_total:,.2f}'],
-        ]
-        
-        table = Table(summary_data, colWidths=[2*inch, 2*inch])
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (0, -1), self.LIGHT_GRAY),
-            ('TEXTCOLOR', (0, 0), (-1, -1), self.SECONDARY_COLOR),
-            ('ALIGN', (0, 0), (0, -1), 'LEFT'),
-            ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
-            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-            ('FONTNAME', (1, -1), (1, -1), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ('FONTSIZE', (1, -1), (1, -1), 14),
-            ('TEXTCOLOR', (1, -1), (1, -1), self.PRIMARY_COLOR),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-            ('TOPPADDING', (0, 0), (-1, -1), 8),
-            ('GRID', (0, 0), (-1, -1), 0.5, self.BORDER_COLOR),
-        ]))
-        
-        elements.append(table)
-        elements.append(Spacer(1, 20))
-        
-        return elements
-    
+
     def _build_room_breakdown(self, rooms: List[Dict[str, Any]]) -> List:
         """Build the room breakdown table."""
-        elements = []
-        
-        elements.append(Paragraph('Room Breakdown', self.styles['ReportSection']))
-        
-        # Table header
-        header = ['Room', 'Dimensions', 'Area', 'Confidence']
+        elements = self._section_heading(
+            'Room Breakdown',
+            f'{len(rooms)} room{"s" if len(rooms) != 1 else ""} detected from blueprint analysis.'
+        )
+
+        header = ['Room', 'Dimensions', 'Area (sq ft)', 'Confidence']
         data = [header]
-        
+
         for room in rooms:
-            dimensions = room.get('dimensions', {})
-            width = dimensions.get('width', 0)
-            length = dimensions.get('length', 0)
+            dims = room.get('dimensions', {})
+            w = dims.get('width', 0)
+            l = dims.get('length', 0)
 
-            # Convert metric dimensions to imperial for display (1 m = 3.28084 ft)
             unit = room.get('unit', 'imperial')
-            if unit == 'metric' and (width > 0 or length > 0):
-                width = width * 3.28084
-                length = length * 3.28084
+            if unit == 'metric' and (w > 0 or l > 0):
+                w *= 3.28084
+                l *= 3.28084
 
-            if width > 0 and length > 0:
-                dim_str = f"{length:.1f}' × {width:.1f}'"
-            else:
-                dim_str = 'Estimated'
+            dim_str = f"{l:.1f}' x {w:.1f}'" if (w > 0 and l > 0) else 'Estimated'
 
             area = room.get('area', 0)
-            # Convert metric area to sq ft for display
             if unit == 'metric' and area > 0:
-                area = area * 10.7639
-            confidence = room.get('confidence', 0.5)
-            
-            if confidence >= 0.8:
+                area *= 10.7639
+
+            conf = room.get('confidence', 0.5)
+            if conf >= 0.8:
                 conf_str = 'High'
-            elif confidence >= 0.6:
+            elif conf >= 0.6:
                 conf_str = 'Medium'
             else:
                 conf_str = 'Low'
-            
+
             data.append([
                 room.get('name', 'Unknown'),
                 dim_str,
-                f"{area:,.0f} sq ft",
-                conf_str
+                f"{area:,.0f}",
+                conf_str,
             ])
-        
-        table = Table(data, colWidths=[2.5*inch, 1.5*inch, 1.25*inch, 1*inch])
-        table.setStyle(TableStyle([
-            # Header
-            ('BACKGROUND', (0, 0), (-1, 0), self.PRIMARY_COLOR),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+
+        col_widths = [2.5 * inch, 1.6 * inch, 1.2 * inch, 0.95 * inch]
+        table = Table(data, colWidths=col_widths)
+
+        style_cmds = [
+            # Header row
+            ('BACKGROUND', (0, 0), (-1, 0), self.BRAND_BLUE_MID),
+            ('TEXTCOLOR', (0, 0), (-1, 0), self.TEXT_PRIMARY),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 10),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
-            ('TOPPADDING', (0, 0), (-1, 0), 10),
-            # Body
-            ('TEXTCOLOR', (0, 1), (-1, -1), self.SECONDARY_COLOR),
+            ('FONTSIZE', (0, 0), (-1, 0), 9),
+            ('TOPPADDING', (0, 0), (-1, 0), 7),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 7),
+            # Body rows
             ('FONTSIZE', (0, 1), (-1, -1), 9),
-            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
-            ('TOPPADDING', (0, 1), (-1, -1), 6),
-            ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-            ('ALIGN', (0, 0), (0, -1), 'LEFT'),
-            # Alternating rows
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, self.LIGHT_GRAY]),
-            # Grid
-            ('GRID', (0, 0), (-1, -1), 0.5, self.BORDER_COLOR),
-        ]))
-        
+            ('TEXTCOLOR', (0, 1), (-1, -1), self.TEXT_SECONDARY),
+            ('TOPPADDING', (0, 1), (-1, -1), 5),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 5),
+            # Alignment
+            ('ALIGN', (2, 0), (2, -1), 'RIGHT'),
+            ('ALIGN', (3, 0), (3, -1), 'CENTER'),
+            # Alternating row backgrounds
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [self.WHITE, self.ROW_ALT]),
+            # Borders: outer box + horizontal lines between rows
+            ('BOX', (0, 0), (-1, -1), 0.5, self.BORDER),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.75, self.BORDER),
+            ('LINEBELOW', (0, 1), (-1, -2), 0.25, self.BORDER_LIGHT),
+        ]
+
+        table.setStyle(TableStyle(style_cmds))
         elements.append(table)
-        elements.append(Spacer(1, 20))
-        
+        elements.append(Spacer(1, 8))
         return elements
-    
+
     def _build_cost_table(
         self,
         materials: List[Dict[str, Any]],
         cost_breakdown: Dict[str, float],
-        contingency_percent: float
+        contingency_percent: float,
     ) -> List:
-        """Build the cost estimate table."""
-        elements = []
-        
-        elements.append(Paragraph('Cost Estimate', self.styles['ReportSection']))
-        
+        """Build the itemized cost estimate table with category grouping and summary totals."""
+        elements = self._section_heading(
+            'Cost Estimate',
+            'Itemized material and labor costs grouped by category.'
+        )
+
         # Group materials by category
-        grouped = {}
+        grouped: Dict[str, List[Dict]] = {}
         for item in materials:
-            category = item.get('category', 'Other')
-            if category not in grouped:
-                grouped[category] = []
-            grouped[category].append(item)
-        
-        # Table header
-        header = ['Material', 'Qty', 'Unit Cost', 'Materials', 'Labor', 'Total']
+            cat = item.get('category', 'Other')
+            grouped.setdefault(cat, []).append(item)
+
+        header = ['Item', 'Qty', 'Unit Cost', 'Materials', 'Labor', 'Total']
         data = [header]
-        
+        category_rows = []
+
         for category, items in grouped.items():
-            # Category row
+            # Category separator row
+            cat_row_idx = len(data)
+            category_rows.append(cat_row_idx)
             data.append([category.upper(), '', '', '', '', ''])
-            
+
             for item in items:
                 data.append([
                     f"  {item.get('name', 'Unknown')}",
                     f"{item.get('quantity', 0)} {item.get('unit', '')}",
-                    f"${item.get('unit_cost', 0):,.2f}",
-                    f"${item.get('material_cost', 0):,.2f}",
-                    f"${item.get('labor_cost', 0):,.2f}",
-                    f"${item.get('total_cost', 0):,.2f}",
+                    self._format_currency(item.get('unit_cost', 0)),
+                    self._format_currency(item.get('material_cost', 0)),
+                    self._format_currency(item.get('labor_cost', 0)),
+                    self._format_currency(item.get('total_cost', 0)),
                 ])
-        
-        col_widths = [2.25*inch, 0.9*inch, 0.85*inch, 0.95*inch, 0.95*inch, 0.95*inch]
-        table = Table(data, colWidths=col_widths)
-        
-        # Find category row indices
-        category_rows = []
-        for i, row in enumerate(data):
-            if row[1] == '' and row[2] == '' and i > 0:
-                category_rows.append(i)
-        
-        style_commands = [
+
+        col_widths = [2.2 * inch, 0.85 * inch, 0.85 * inch, 0.95 * inch, 0.95 * inch, 1.0 * inch]
+        table = Table(data, colWidths=col_widths, repeatRows=1)
+
+        style_cmds = [
             # Header
-            ('BACKGROUND', (0, 0), (-1, 0), self.PRIMARY_COLOR),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('BACKGROUND', (0, 0), (-1, 0), self.BRAND_BLUE_MID),
+            ('TEXTCOLOR', (0, 0), (-1, 0), self.TEXT_PRIMARY),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 9),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
-            ('TOPPADDING', (0, 0), (-1, 0), 8),
+            ('FONTSIZE', (0, 0), (-1, 0), 8),
+            ('TOPPADDING', (0, 0), (-1, 0), 7),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 7),
             ('ALIGN', (1, 0), (-1, 0), 'RIGHT'),
             # Body
-            ('TEXTCOLOR', (0, 1), (-1, -1), self.SECONDARY_COLOR),
             ('FONTSIZE', (0, 1), (-1, -1), 8),
-            ('BOTTOMPADDING', (0, 1), (-1, -1), 4),
+            ('TEXTCOLOR', (0, 1), (-1, -1), self.TEXT_SECONDARY),
             ('TOPPADDING', (0, 1), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 4),
             ('ALIGN', (1, 1), (-1, -1), 'RIGHT'),
             ('ALIGN', (0, 1), (0, -1), 'LEFT'),
-            # Grid
-            ('GRID', (0, 0), (-1, -1), 0.5, self.BORDER_COLOR),
+            # Borders
+            ('BOX', (0, 0), (-1, -1), 0.5, self.BORDER),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.75, self.BORDER),
+            ('LINEBELOW', (0, 1), (-1, -2), 0.25, self.BORDER_LIGHT),
         ]
-        
-        # Style category rows
-        for row_idx in category_rows:
-            style_commands.extend([
-                ('BACKGROUND', (0, row_idx), (-1, row_idx), self.LIGHT_GRAY),
-                ('FONTNAME', (0, row_idx), (0, row_idx), 'Helvetica-Bold'),
-                ('FONTSIZE', (0, row_idx), (0, row_idx), 8),
-                ('SPAN', (0, row_idx), (-1, row_idx)),
+
+        # Category separator rows: light blue bg, bold, span full width
+        for idx in category_rows:
+            style_cmds.extend([
+                ('BACKGROUND', (0, idx), (-1, idx), self.BRAND_BLUE_LIGHT),
+                ('FONTNAME', (0, idx), (0, idx), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, idx), (0, idx), 8),
+                ('TEXTCOLOR', (0, idx), (0, idx), self.TEXT_PRIMARY),
+                ('SPAN', (0, idx), (-1, idx)),
+                ('TOPPADDING', (0, idx), (-1, idx), 5),
+                ('BOTTOMPADDING', (0, idx), (-1, idx), 5),
+                ('LINEBELOW', (0, idx), (-1, idx), 0.5, self.BORDER),
             ])
-        
-        table.setStyle(TableStyle(style_commands))
+
+        table.setStyle(TableStyle(style_cmds))
         elements.append(table)
-        
-        # Summary totals
+
+        # ---- Summary totals (right-aligned) ----
         elements.append(Spacer(1, 10))
-        
-        summary_data = [
-            ['Materials Subtotal', f"${cost_breakdown.get('materials_subtotal', 0):,.2f}"],
-            ['Labor Subtotal', f"${cost_breakdown.get('labor_subtotal', 0):,.2f}"],
-            ['Subtotal', f"${cost_breakdown.get('subtotal', 0):,.2f}"],
-            [f'Contingency ({contingency_percent:.0f}%)', f"${cost_breakdown.get('contingency_amount', 0):,.2f}"],
-            ['Grand Total', f"${cost_breakdown.get('grand_total', 0):,.2f}"],
+
+        materials_sub = cost_breakdown.get('materials_subtotal', 0)
+        labor_sub = cost_breakdown.get('labor_subtotal', 0)
+        subtotal = cost_breakdown.get('subtotal', 0)
+        contingency = cost_breakdown.get('contingency_amount', 0)
+        grand_total = cost_breakdown.get('grand_total', 0)
+
+        summary_rows = [
+            ('Materials Subtotal', self._format_currency(materials_sub), False),
+            ('Labor Subtotal', self._format_currency(labor_sub), False),
+            ('Subtotal', self._format_currency(subtotal), False),
+            (f'Contingency ({contingency_percent:.0f}%)', self._format_currency(contingency), False),
+            ('Grand Total', self._format_currency(grand_total), True),
         ]
-        
-        summary_table = Table(summary_data, colWidths=[2*inch, 1.5*inch])
-        summary_table.setStyle(TableStyle([
+
+        summary_data = [[label, val] for label, val, _ in summary_rows]
+        summary = Table(summary_data, colWidths=[2 * inch, 1.5 * inch])
+
+        summary_style = [
             ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
             ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ('TEXTCOLOR', (0, 0), (-1, -1), self.SECONDARY_COLOR),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-            ('TOPPADDING', (0, 0), (-1, -1), 6),
-            # Grand total row
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ('TEXTCOLOR', (0, 0), (-1, -1), self.TEXT_SECONDARY),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+            ('LEFTPADDING', (0, 0), (-1, -1), 6),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+            # Subtotal line
+            ('LINEABOVE', (0, 2), (-1, 2), 0.5, self.BORDER_LIGHT),
+            # Grand total emphasis
+            ('LINEABOVE', (0, -1), (-1, -1), 1, self.BORDER),
             ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
             ('FONTSIZE', (0, -1), (-1, -1), 12),
-            ('TEXTCOLOR', (1, -1), (1, -1), self.PRIMARY_COLOR),
-            ('LINEABOVE', (0, -1), (-1, -1), 1, self.BORDER_COLOR),
-        ]))
-        
-        # Right-align the summary table
-        summary_wrapper = Table([[summary_table]], colWidths=[7*inch])
-        summary_wrapper.setStyle(TableStyle([
-            ('ALIGN', (0, 0), (0, 0), 'RIGHT'),
-        ]))
-        
-        elements.append(summary_wrapper)
-        elements.append(Spacer(1, 20))
-        
+            ('TEXTCOLOR', (1, -1), (1, -1), self.BRAND_BLUE),
+            ('TOPPADDING', (0, -1), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, -1), (-1, -1), 8),
+        ]
+        summary.setStyle(TableStyle(summary_style))
+
+        # Right-align the summary block
+        wrapper = Table([[summary]], colWidths=[7 * inch])
+        wrapper.setStyle(TableStyle([('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+        elements.append(wrapper)
+        elements.append(Spacer(1, 12))
         return elements
-    
+
     def _build_tier_comparison(
         self,
         tier_comparisons: List[Dict[str, Any]],
-        selected_tier: str
+        selected_tier: str,
     ) -> List:
-        """Build the quality tier comparison section."""
-        elements = []
-        
-        elements.append(Paragraph('Quality Tier Comparison', self.styles['ReportSection']))
-        
+        """Build the quality tier comparison table."""
+        elements = self._section_heading(
+            'Quality Tier Comparison',
+            'Estimated totals at different quality levels. Your selected tier is highlighted.'
+        )
+
         tier_info = {
-            'budget': ('Budget', 'Cost-effective materials'),
-            'standard': ('Standard', 'Quality mid-range'),
-            'premium': ('Premium', 'High-end finishes'),
-            'luxury': ('Luxury', 'Top-tier everything'),
+            'budget': ('Budget', 'Builder-grade materials, functional finishes'),
+            'standard': ('Standard', 'Quality mid-range materials and finishes'),
+            'premium': ('Premium', 'High-end finishes and upgraded fixtures'),
+            'luxury': ('Luxury', 'Top-tier materials and custom finishes'),
         }
-        
+
         header = ['Tier', 'Description', 'Estimated Total']
         data = [header]
-        
-        for tier in tier_comparisons:
-            tier_name = tier.get('tier', 'standard')
-            label, desc = tier_info.get(tier_name, ('Unknown', ''))
-            total = tier.get('grand_total', 0)
-            
-            # Mark selected tier
-            if tier_name == selected_tier:
-                label = f"✓ {label}"
-            
-            data.append([label, desc, f"${total:,.2f}"])
-        
-        table = Table(data, colWidths=[1.5*inch, 2.5*inch, 1.5*inch])
-        
-        # Find selected tier row
+
         selected_row = None
         for i, tier in enumerate(tier_comparisons):
-            if tier.get('tier') == selected_tier:
-                selected_row = i + 1  # +1 for header
-                break
-        
-        style_commands = [
+            tier_name = tier.get('tier', 'standard')
+            label, desc = tier_info.get(tier_name, (tier_name.capitalize(), ''))
+            total = tier.get('grand_total', 0)
+
+            if tier_name == selected_tier:
+                selected_row = i + 1
+                label = f">>> {label}"
+
+            data.append([label, desc, self._format_currency(total)])
+
+        col_widths = [1.4 * inch, 3.0 * inch, 1.6 * inch]
+        table = Table(data, colWidths=col_widths)
+
+        style_cmds = [
             # Header
-            ('BACKGROUND', (0, 0), (-1, 0), self.PRIMARY_COLOR),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('BACKGROUND', (0, 0), (-1, 0), self.BRAND_BLUE_MID),
+            ('TEXTCOLOR', (0, 0), (-1, 0), self.TEXT_PRIMARY),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 10),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
-            ('TOPPADDING', (0, 0), (-1, 0), 8),
+            ('FONTSIZE', (0, 0), (-1, 0), 9),
+            ('TOPPADDING', (0, 0), (-1, 0), 7),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 7),
             # Body
-            ('TEXTCOLOR', (0, 1), (-1, -1), self.SECONDARY_COLOR),
-            ('FONTSIZE', (0, 1), (-1, -1), 10),
-            ('BOTTOMPADDING', (0, 1), (-1, -1), 8),
-            ('TOPPADDING', (0, 1), (-1, -1), 8),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+            ('TEXTCOLOR', (0, 1), (-1, -1), self.TEXT_SECONDARY),
+            ('TOPPADDING', (0, 1), (-1, -1), 7),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 7),
             ('ALIGN', (2, 0), (2, -1), 'RIGHT'),
-            # Grid
-            ('GRID', (0, 0), (-1, -1), 0.5, self.BORDER_COLOR),
+            # Borders
+            ('BOX', (0, 0), (-1, -1), 0.5, self.BORDER),
+            ('LINEBELOW', (0, 0), (-1, 0), 0.75, self.BORDER),
+            ('LINEBELOW', (0, 1), (-1, -2), 0.25, self.BORDER_LIGHT),
         ]
-        
-        # Highlight selected tier
-        if selected_row:
-            style_commands.extend([
-                ('BACKGROUND', (0, selected_row), (-1, selected_row), colors.HexColor('#D1FAE5')),
+
+        # Highlight the selected tier row
+        if selected_row is not None:
+            style_cmds.extend([
+                ('BACKGROUND', (0, selected_row), (-1, selected_row), self.BRAND_BLUE_LIGHT),
                 ('FONTNAME', (0, selected_row), (-1, selected_row), 'Helvetica-Bold'),
+                ('TEXTCOLOR', (2, selected_row), (2, selected_row), self.BRAND_BLUE),
             ])
-        
-        table.setStyle(TableStyle(style_commands))
+
+        table.setStyle(TableStyle(style_cmds))
         elements.append(table)
-        elements.append(Spacer(1, 30))
-        
+        elements.append(Spacer(1, 20))
         return elements
-    
+
     def _build_footer(self) -> List:
         """Build the report footer with disclaimer."""
         elements = []
-        
+
+        elements.append(Spacer(1, 10))
         elements.append(HRFlowable(
-            width="100%",
-            thickness=1,
-            color=self.BORDER_COLOR,
-            spaceBefore=20,
-            spaceAfter=15
+            width="100%", thickness=0.75, color=self.BORDER, spaceAfter=12
         ))
-        
-        disclaimer = """
-        <b>Disclaimer:</b> This estimate is generated by AI-powered analysis and is intended for 
-        planning purposes only. Actual costs may vary based on local labor rates, material availability, 
-        site conditions, and other factors. We recommend obtaining quotes from licensed contractors 
-        before making final decisions. This estimate does not include permits, design fees, or 
-        unforeseen conditions.
-        """
-        
-        elements.append(Paragraph(disclaimer.strip(), self.styles['ReportSmall']))
-        
-        elements.append(Spacer(1, 15))
-        
+
+        disclaimer = (
+            "<b>Disclaimer:</b> This estimate is generated by AI-powered analysis and is "
+            "intended for planning purposes only. Actual costs may vary based on local labor "
+            "rates, material availability, site conditions, and other factors. We recommend "
+            "obtaining quotes from licensed contractors before making final decisions. This "
+            "estimate does not include permits, design fees, or unforeseen conditions."
+        )
+        elements.append(Paragraph(disclaimer, self.styles['SmallText']))
+        elements.append(Spacer(1, 12))
+
         elements.append(Paragraph(
-            'Generated by Takeoff.ai — AI-Powered Construction Estimator',
-            self.styles['ReportFooter']
+            'Generated by Takeoff.ai  —  AI-Powered Construction Estimator',
+            self.styles['FooterText'],
         ))
-        
         elements.append(Paragraph(
-            'https://takeoff.ai',
-            self.styles['ReportFooter']
+            'https://mytakeoff.ai',
+            self.styles['FooterText'],
         ))
-        
+
         return elements
