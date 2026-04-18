@@ -110,6 +110,7 @@ class ProjectEstimate:
     total_estimate: float = 0.0
     notes: List[str] = field(default_factory=list)
     mep_breakdown: Optional[Dict[str, Union[float, str, List[str]]]] = None
+    demo_breakdown: Optional[Dict] = None
 
 
 class PricingDatabase:
@@ -449,6 +450,300 @@ class PricingDatabase:
             labor_unit="unit",
             category="bathroom"
         ),
+
+        # ==================== ELECTRICAL ====================
+        "electrical_outlet": MaterialPricing(
+            material_type="electrical_outlet",
+            display_name="Electrical Outlet (Duplex)",
+            price_points={
+                QualityTier.BUDGET: PricePoint(5.00, "unit", QualityTier.BUDGET, "Leviton, Pass & Seymour", "Basic 15A duplex"),
+                QualityTier.STANDARD: PricePoint(12.00, "unit", QualityTier.STANDARD, "Leviton Decora", "15A tamper-resistant"),
+                QualityTier.PREMIUM: PricePoint(25.00, "unit", QualityTier.PREMIUM, "Lutron, Legrand", "USB-A/C combo, TR"),
+                QualityTier.LUXURY: PricePoint(60.00, "unit", QualityTier.LUXURY, "Legrand Radiant", "USB-C 30W, designer plate"),
+            },
+            labor_rate_per_unit=20.00,
+            labor_unit="unit",
+            category="electrical"
+        ),
+        "electrical_gfi_outlet": MaterialPricing(
+            material_type="electrical_gfi_outlet",
+            display_name="GFI Outlet",
+            price_points={
+                QualityTier.BUDGET: PricePoint(15.00, "unit", QualityTier.BUDGET, "Leviton", "15A GFCI, basic"),
+                QualityTier.STANDARD: PricePoint(25.00, "unit", QualityTier.STANDARD, "Leviton SmartlockPro", "20A GFCI, self-test"),
+                QualityTier.PREMIUM: PricePoint(45.00, "unit", QualityTier.PREMIUM, "Lutron, Legrand", "20A GFCI with USB"),
+                QualityTier.LUXURY: PricePoint(80.00, "unit", QualityTier.LUXURY, "Legrand Radiant", "Designer GFCI with USB-C"),
+            },
+            labor_rate_per_unit=25.00,
+            labor_unit="unit",
+            category="electrical"
+        ),
+        "electrical_switch": MaterialPricing(
+            material_type="electrical_switch",
+            display_name="Light Switch",
+            price_points={
+                QualityTier.BUDGET: PricePoint(5.00, "unit", QualityTier.BUDGET, "Leviton", "Single-pole, basic"),
+                QualityTier.STANDARD: PricePoint(12.00, "unit", QualityTier.STANDARD, "Leviton Decora", "Single-pole or 3-way"),
+                QualityTier.PREMIUM: PricePoint(35.00, "unit", QualityTier.PREMIUM, "Lutron Caseta", "Smart dimmer, app control"),
+                QualityTier.LUXURY: PricePoint(120.00, "unit", QualityTier.LUXURY, "Lutron RA3", "Whole-home smart, keypads"),
+            },
+            labor_rate_per_unit=20.00,
+            labor_unit="unit",
+            category="electrical"
+        ),
+        "electrical_light_fixture": MaterialPricing(
+            material_type="electrical_light_fixture",
+            display_name="Light Fixture",
+            price_points={
+                QualityTier.BUDGET: PricePoint(50.00, "unit", QualityTier.BUDGET, "Hampton Bay", "Basic flush mount, LED"),
+                QualityTier.STANDARD: PricePoint(150.00, "unit", QualityTier.STANDARD, "Progress Lighting, Kichler", "Semi-flush, dimmable LED"),
+                QualityTier.PREMIUM: PricePoint(400.00, "unit", QualityTier.PREMIUM, "Visual Comfort, Hinkley", "Designer pendant/semi-flush"),
+                QualityTier.LUXURY: PricePoint(1200.00, "unit", QualityTier.LUXURY, "Kelly Wearstler, Apparatus", "Statement fixture, custom"),
+            },
+            labor_rate_per_unit=150.00,
+            labor_unit="unit",
+            category="electrical"
+        ),
+        "electrical_wire_run": MaterialPricing(
+            material_type="electrical_wire_run",
+            display_name="Electrical Wire (NM Cable)",
+            price_points={
+                QualityTier.BUDGET: PricePoint(0.35, "linear ft", QualityTier.BUDGET, "Southwire", "14/2 NM-B, 15A circuits"),
+                QualityTier.STANDARD: PricePoint(0.55, "linear ft", QualityTier.STANDARD, "Southwire", "12/2 NM-B, 20A circuits"),
+                QualityTier.PREMIUM: PricePoint(1.50, "linear ft", QualityTier.PREMIUM, "Southwire in conduit", "12/2 in EMT conduit"),
+                QualityTier.LUXURY: PricePoint(3.00, "linear ft", QualityTier.LUXURY, "MC cable", "Armored cable (MC/BX)"),
+            },
+            labor_rate_per_unit=2.50,
+            labor_unit="linear ft",
+            category="electrical"
+        ),
+        "electrical_breaker_panel": MaterialPricing(
+            material_type="electrical_breaker_panel",
+            display_name="Breaker Panel",
+            price_points={
+                QualityTier.BUDGET: PricePoint(400.00, "unit", QualityTier.BUDGET, "Square D QO", "100A, 20-space loadcenter"),
+                QualityTier.STANDARD: PricePoint(800.00, "unit", QualityTier.STANDARD, "Leviton, Square D", "200A, 40-space panel"),
+                QualityTier.PREMIUM: PricePoint(1500.00, "unit", QualityTier.PREMIUM, "Siemens, Eaton", "200A smart-ready, AFCI"),
+                QualityTier.LUXURY: PricePoint(3500.00, "unit", QualityTier.LUXURY, "Siemens, custom", "200A + whole-home surge + monitoring"),
+            },
+            labor_rate_per_unit=1500.00,
+            labor_unit="unit",
+            category="electrical"
+        ),
+
+        # ==================== PLUMBING ====================
+        "plumbing_supply_line": MaterialPricing(
+            material_type="plumbing_supply_line",
+            display_name="Supply Line Rough-in",
+            price_points={
+                QualityTier.BUDGET: PricePoint(75.00, "unit", QualityTier.BUDGET, "PEX A (Uponor)", "PEX A supply rough-in per fixture"),
+                QualityTier.STANDARD: PricePoint(120.00, "unit", QualityTier.STANDARD, "PEX A (Uponor)", "PEX A with manifold per fixture"),
+                QualityTier.PREMIUM: PricePoint(200.00, "unit", QualityTier.PREMIUM, "Copper L-type", "Copper supply per fixture"),
+                QualityTier.LUXURY: PricePoint(350.00, "unit", QualityTier.LUXURY, "Type K copper", "Custom copper/brass per fixture"),
+            },
+            labor_rate_per_unit=200.00,
+            labor_unit="unit",
+            category="plumbing"
+        ),
+        "plumbing_drain_line": MaterialPricing(
+            material_type="plumbing_drain_line",
+            display_name="Drain Line Rough-in",
+            price_points={
+                QualityTier.BUDGET: PricePoint(60.00, "unit", QualityTier.BUDGET, "ABS pipe", "ABS DWV drain per fixture"),
+                QualityTier.STANDARD: PricePoint(100.00, "unit", QualityTier.STANDARD, "PVC DWV", "PVC schedule 40 DWV per fixture"),
+                QualityTier.PREMIUM: PricePoint(175.00, "unit", QualityTier.PREMIUM, "Cast iron DWV", "CI riser per fixture"),
+                QualityTier.LUXURY: PricePoint(300.00, "unit", QualityTier.LUXURY, "Cast iron", "Full cast iron DWV per fixture"),
+            },
+            labor_rate_per_unit=250.00,
+            labor_unit="unit",
+            category="plumbing"
+        ),
+        "plumbing_vent_stack": MaterialPricing(
+            material_type="plumbing_vent_stack",
+            display_name="Vent Stack",
+            price_points={
+                QualityTier.BUDGET: PricePoint(200.00, "unit", QualityTier.BUDGET, "PVC", "PVC vent stack per wet wall"),
+                QualityTier.STANDARD: PricePoint(400.00, "unit", QualityTier.STANDARD, "PVC schedule 40", "PVC vent with AAV option"),
+                QualityTier.PREMIUM: PricePoint(600.00, "unit", QualityTier.PREMIUM, "Cast iron", "Cast iron vent through roof"),
+                QualityTier.LUXURY: PricePoint(1000.00, "unit", QualityTier.LUXURY, "Cast iron", "CI vent + custom flashing"),
+            },
+            labor_rate_per_unit=500.00,
+            labor_unit="unit",
+            category="plumbing"
+        ),
+        "plumbing_water_heater": MaterialPricing(
+            material_type="plumbing_water_heater",
+            display_name="Water Heater",
+            price_points={
+                QualityTier.BUDGET: PricePoint(600.00, "unit", QualityTier.BUDGET, "Rheem, AO Smith", "40-gal electric, 6yr"),
+                QualityTier.STANDARD: PricePoint(900.00, "unit", QualityTier.STANDARD, "Bradford White, Rheem", "50-gal gas, 12yr"),
+                QualityTier.PREMIUM: PricePoint(1500.00, "unit", QualityTier.PREMIUM, "Rinnai, Navien", "Tankless gas, on-demand"),
+                QualityTier.LUXURY: PricePoint(3000.00, "unit", QualityTier.LUXURY, "Rinnai, Navien", "Tankless + recirculation pump"),
+            },
+            labor_rate_per_unit=600.00,
+            labor_unit="unit",
+            category="plumbing"
+        ),
+        "plumbing_shutoff_valve": MaterialPricing(
+            material_type="plumbing_shutoff_valve",
+            display_name="Shut-off Valve",
+            price_points={
+                QualityTier.BUDGET: PricePoint(15.00, "unit", QualityTier.BUDGET, "BrassCraft", "Ball valve, chrome"),
+                QualityTier.STANDARD: PricePoint(25.00, "unit", QualityTier.STANDARD, "Watts, BrassCraft", "Angle stop, quarter-turn"),
+                QualityTier.PREMIUM: PricePoint(45.00, "unit", QualityTier.PREMIUM, "Watts, Kohler", "Brass quarter-turn, brushed nickel"),
+                QualityTier.LUXURY: PricePoint(85.00, "unit", QualityTier.LUXURY, "Kohler, custom", "Designer finish, smart valve option"),
+            },
+            labor_rate_per_unit=30.00,
+            labor_unit="unit",
+            category="plumbing"
+        ),
+
+        # ==================== APPLIANCES ====================
+        "appliance_range": MaterialPricing(
+            material_type="appliance_range",
+            display_name="Range/Oven",
+            price_points={
+                QualityTier.BUDGET: PricePoint(500.00, "unit", QualityTier.BUDGET, "GE, Frigidaire", "30\" freestanding electric"),
+                QualityTier.STANDARD: PricePoint(1200.00, "unit", QualityTier.STANDARD, "GE Profile, Samsung", "30\" slide-in gas"),
+                QualityTier.PREMIUM: PricePoint(2500.00, "unit", QualityTier.PREMIUM, "Bosch, KitchenAid", "30\" convection, self-clean"),
+                QualityTier.LUXURY: PricePoint(5000.00, "unit", QualityTier.LUXURY, "Wolf, Thermador", "36\" pro-style dual fuel"),
+            },
+            labor_rate_per_unit=150.00,
+            labor_unit="unit",
+            category="appliances"
+        ),
+        "appliance_dishwasher": MaterialPricing(
+            material_type="appliance_dishwasher",
+            display_name="Dishwasher",
+            price_points={
+                QualityTier.BUDGET: PricePoint(400.00, "unit", QualityTier.BUDGET, "GE, Frigidaire", "24\" built-in, 59 dBa"),
+                QualityTier.STANDARD: PricePoint(700.00, "unit", QualityTier.STANDARD, "Bosch 300, Samsung", "24\", 46 dBa, stainless tub"),
+                QualityTier.PREMIUM: PricePoint(1200.00, "unit", QualityTier.PREMIUM, "Bosch 800, Miele", "24\", 42 dBa, panel-ready option"),
+                QualityTier.LUXURY: PricePoint(2000.00, "unit", QualityTier.LUXURY, "Miele, Gaggenau", "Panel-ready, 38 dBa, auto-open"),
+            },
+            labor_rate_per_unit=200.00,
+            labor_unit="unit",
+            category="appliances"
+        ),
+        "appliance_microwave_hood": MaterialPricing(
+            material_type="appliance_microwave_hood",
+            display_name="Microwave/Range Hood",
+            price_points={
+                QualityTier.BUDGET: PricePoint(200.00, "unit", QualityTier.BUDGET, "GE, Sharp", "OTR microwave, 300 CFM"),
+                QualityTier.STANDARD: PricePoint(500.00, "unit", QualityTier.STANDARD, "Broan, GE Profile", "30\" wall hood, 400 CFM"),
+                QualityTier.PREMIUM: PricePoint(900.00, "unit", QualityTier.PREMIUM, "Zephyr, Broan Elite", "30\" insert/wall, 600 CFM"),
+                QualityTier.LUXURY: PricePoint(1500.00, "unit", QualityTier.LUXURY, "Miele, Best", "36\" pro wall hood, 900 CFM"),
+            },
+            labor_rate_per_unit=200.00,
+            labor_unit="unit",
+            category="appliances"
+        ),
+        "appliance_refrigerator": MaterialPricing(
+            material_type="appliance_refrigerator",
+            display_name="Refrigerator",
+            price_points={
+                QualityTier.BUDGET: PricePoint(800.00, "unit", QualityTier.BUDGET, "GE, Frigidaire", "25 cu ft French door"),
+                QualityTier.STANDARD: PricePoint(1500.00, "unit", QualityTier.STANDARD, "Samsung, LG", "27 cu ft French door, ice maker"),
+                QualityTier.PREMIUM: PricePoint(2500.00, "unit", QualityTier.PREMIUM, "KitchenAid, Bosch", "Counter-depth French door"),
+                QualityTier.LUXURY: PricePoint(5000.00, "unit", QualityTier.LUXURY, "Sub-Zero, Thermador", "Built-in panel-ready, 48\""),
+            },
+            labor_rate_per_unit=100.00,
+            labor_unit="unit",
+            category="appliances"
+        ),
+        "appliance_washer": MaterialPricing(
+            material_type="appliance_washer",
+            display_name="Washer",
+            price_points={
+                QualityTier.BUDGET: PricePoint(500.00, "unit", QualityTier.BUDGET, "GE, Amana", "4.5 cu ft top load"),
+                QualityTier.STANDARD: PricePoint(800.00, "unit", QualityTier.STANDARD, "Samsung, LG", "5.0 cu ft front load"),
+                QualityTier.PREMIUM: PricePoint(1200.00, "unit", QualityTier.PREMIUM, "LG ThinQ, Samsung", "5.5 cu ft front load, steam"),
+                QualityTier.LUXURY: PricePoint(2000.00, "unit", QualityTier.LUXURY, "Miele, Speed Queen", "W1 front load, commercial grade"),
+            },
+            labor_rate_per_unit=100.00,
+            labor_unit="unit",
+            category="appliances"
+        ),
+        "appliance_dryer": MaterialPricing(
+            material_type="appliance_dryer",
+            display_name="Dryer",
+            price_points={
+                QualityTier.BUDGET: PricePoint(500.00, "unit", QualityTier.BUDGET, "GE, Amana", "7.2 cu ft electric dryer"),
+                QualityTier.STANDARD: PricePoint(800.00, "unit", QualityTier.STANDARD, "Samsung, LG", "7.4 cu ft electric, sensor dry"),
+                QualityTier.PREMIUM: PricePoint(1200.00, "unit", QualityTier.PREMIUM, "LG ThinQ, Samsung", "7.8 cu ft steam dryer"),
+                QualityTier.LUXURY: PricePoint(2000.00, "unit", QualityTier.LUXURY, "Miele, Speed Queen", "T1 heat-pump, commercial grade"),
+            },
+            labor_rate_per_unit=100.00,
+            labor_unit="unit",
+            category="appliances"
+        ),
+
+        # ==================== DEMO/REMOVAL (labor-only; shown via remodel mode toggle) ====================
+        "demo_cabinet_removal": MaterialPricing(
+            material_type="demo_cabinet_removal",
+            display_name="Cabinet Removal",
+            price_points={
+                QualityTier.BUDGET: PricePoint(40.00, "linear ft", QualityTier.BUDGET, "", "Rough removal, no salvage"),
+                QualityTier.STANDARD: PricePoint(50.00, "linear ft", QualityTier.STANDARD, "", "Standard removal + haul"),
+                QualityTier.PREMIUM: PricePoint(60.00, "linear ft", QualityTier.PREMIUM, "", "Careful removal, salvage hardware"),
+                QualityTier.LUXURY: PricePoint(75.00, "linear ft", QualityTier.LUXURY, "", "Full salvage + recycling program"),
+            },
+            labor_rate_per_unit=0.00,
+            labor_unit="linear ft",
+            category="demo"
+        ),
+        "demo_flooring_removal": MaterialPricing(
+            material_type="demo_flooring_removal",
+            display_name="Flooring Removal",
+            price_points={
+                QualityTier.BUDGET: PricePoint(2.00, "sq ft", QualityTier.BUDGET, "", "Basic scrape and demo"),
+                QualityTier.STANDARD: PricePoint(3.00, "sq ft", QualityTier.STANDARD, "", "Standard removal + haul"),
+                QualityTier.PREMIUM: PricePoint(3.50, "sq ft", QualityTier.PREMIUM, "", "Careful removal, subfloor prep"),
+                QualityTier.LUXURY: PricePoint(4.00, "sq ft", QualityTier.LUXURY, "", "Full prep + subfloor patch"),
+            },
+            labor_rate_per_unit=0.00,
+            labor_unit="sq ft",
+            category="demo"
+        ),
+        "demo_drywall_removal": MaterialPricing(
+            material_type="demo_drywall_removal",
+            display_name="Drywall Removal",
+            price_points={
+                QualityTier.BUDGET: PricePoint(1.50, "sq ft", QualityTier.BUDGET, "", "Tear-out, minimal dust control"),
+                QualityTier.STANDARD: PricePoint(2.25, "sq ft", QualityTier.STANDARD, "", "Standard demo + plastic barrier"),
+                QualityTier.PREMIUM: PricePoint(2.75, "sq ft", QualityTier.PREMIUM, "", "Dust-controlled, framing protected"),
+                QualityTier.LUXURY: PricePoint(3.00, "sq ft", QualityTier.LUXURY, "", "Full containment + air scrubber"),
+            },
+            labor_rate_per_unit=0.00,
+            labor_unit="sq ft",
+            category="demo"
+        ),
+        "demo_fixture_removal": MaterialPricing(
+            material_type="demo_fixture_removal",
+            display_name="Fixture Removal",
+            price_points={
+                QualityTier.BUDGET: PricePoint(100.00, "unit", QualityTier.BUDGET, "", "Disconnect and remove per fixture"),
+                QualityTier.STANDARD: PricePoint(200.00, "unit", QualityTier.STANDARD, "", "Remove + cap supply/drain"),
+                QualityTier.PREMIUM: PricePoint(250.00, "unit", QualityTier.PREMIUM, "", "Remove + cap + patch wall"),
+                QualityTier.LUXURY: PricePoint(300.00, "unit", QualityTier.LUXURY, "", "White-glove removal + salvage"),
+            },
+            labor_rate_per_unit=0.00,
+            labor_unit="unit",
+            category="demo"
+        ),
+        "demo_haul_away": MaterialPricing(
+            material_type="demo_haul_away",
+            display_name="Haul-away / Dumpster",
+            price_points={
+                QualityTier.BUDGET: PricePoint(500.00, "unit", QualityTier.BUDGET, "", "10-yd dumpster, small project"),
+                QualityTier.STANDARD: PricePoint(800.00, "unit", QualityTier.STANDARD, "", "15-yd dumpster, mid project"),
+                QualityTier.PREMIUM: PricePoint(1200.00, "unit", QualityTier.PREMIUM, "", "20-yd dumpster, full remodel"),
+                QualityTier.LUXURY: PricePoint(1500.00, "unit", QualityTier.LUXURY, "", "20-yd + junk hauler, sorted recycling"),
+            },
+            labor_rate_per_unit=0.00,
+            labor_unit="unit",
+            category="demo"
+        ),
     }
     
     # Regional price adjustments (multipliers)
@@ -693,22 +988,26 @@ class CostEstimator:
             ProjectEstimate with all costs
         """
         estimates = []
+        demo_estimates = []
         subtotal_materials = 0.0
         subtotal_labor = 0.0
-        
+
         for material_key, quantity in material_totals.items():
             # Get quality tier for this material
             tier = self.quality_tier
             if selected_materials and material_key in selected_materials:
                 tier = selected_materials[material_key]
-            
+
             estimate = self.estimate_material(material_key, quantity, tier)
             if estimate:
-                estimates.append(estimate)
-                subtotal_materials += estimate.material_cost
-                subtotal_labor += estimate.labor_cost
-        
-        # Calculate contingency
+                if estimate.category == "demo":
+                    demo_estimates.append(estimate)
+                else:
+                    estimates.append(estimate)
+                    subtotal_materials += estimate.material_cost
+                    subtotal_labor += estimate.labor_cost
+
+        # Calculate contingency (excludes demo costs)
         subtotal = subtotal_materials + subtotal_labor
         contingency_amount = subtotal * self.contingency_percent
         total_estimate = subtotal + contingency_amount
@@ -724,7 +1023,29 @@ class CostEstimator:
                 "disclaimer": "Rough MEP estimate only (±30%). Actual costs vary significantly by complexity, local codes, and existing infrastructure.",
                 "includes": ["HVAC rough-in", "Electrical rough-in", "Plumbing rough-in"],
             }
-        
+
+        # Build demo_breakdown (always included if demo items exist; displayed via frontend toggle)
+        demo_breakdown = None
+        if demo_estimates:
+            demo_subtotal = sum(e.total_cost for e in demo_estimates)
+            demo_breakdown = {
+                "line_items": [
+                    {
+                        "material_type": e.material_type,
+                        "display_name": e.display_name,
+                        "units_needed": e.units_needed,
+                        "unit": e.unit,
+                        "material_cost": e.material_cost,
+                        "labor_cost": e.labor_cost,
+                        "total_cost": e.total_cost,
+                        "price_per_unit": e.price_per_unit,
+                    }
+                    for e in demo_estimates
+                ],
+                "subtotal": round(demo_subtotal, 2),
+                "disclaimer": "Demo/removal costs are labor only. Actual costs vary by accessibility, material condition, and local disposal fees.",
+            }
+
         return ProjectEstimate(
             project_name=project_name,
             timestamp=datetime.now().isoformat(),
@@ -735,7 +1056,8 @@ class CostEstimator:
             contingency_percent=self.contingency_percent,
             contingency_amount=round(contingency_amount, 2),
             total_estimate=round(total_estimate, 2),
-            mep_breakdown=mep_breakdown
+            mep_breakdown=mep_breakdown,
+            demo_breakdown=demo_breakdown,
         )
 
 

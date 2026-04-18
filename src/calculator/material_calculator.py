@@ -23,6 +23,7 @@ class RoomType(Enum):
     BEDROOM = "bedroom"
     LIVING_ROOM = "living_room"
     DINING_ROOM = "dining_room"
+    LAUNDRY = "laundry"
     OTHER = "other"
 
 
@@ -82,38 +83,43 @@ class RoomTypeDetector:
     """Detect room type from room name."""
     
     KITCHEN_KEYWORDS = ['kitchen', 'kitchenette', 'galley']
-    BATHROOM_KEYWORDS = ['bathroom', 'bath', 'restroom', 'powder room', 'half bath', 
+    BATHROOM_KEYWORDS = ['bathroom', 'bath', 'restroom', 'powder room', 'half bath',
                          'full bath', 'master bath', 'ensuite', 'wc', 'lavatory']
     BEDROOM_KEYWORDS = ['bedroom', 'master bedroom', 'guest room', 'nursery']
-    LIVING_KEYWORDS = ['living room', 'living area', 'family room', 'great room', 
+    LIVING_KEYWORDS = ['living room', 'living area', 'family room', 'great room',
                        'sitting room', 'den', 'lounge']
     DINING_KEYWORDS = ['dining room', 'dining area', 'breakfast nook', 'eat-in']
-    
+    LAUNDRY_KEYWORDS = ['laundry', 'laundry room', 'utility room', 'washroom', 'mudroom']
+
     @classmethod
     def detect(cls, room_name: str) -> RoomType:
         """Detect room type from room name."""
         name_lower = room_name.lower().strip()
-        
+
         for keyword in cls.KITCHEN_KEYWORDS:
             if keyword in name_lower:
                 return RoomType.KITCHEN
-        
+
         for keyword in cls.BATHROOM_KEYWORDS:
             if keyword in name_lower:
                 return RoomType.BATHROOM
-        
+
         for keyword in cls.BEDROOM_KEYWORDS:
             if keyword in name_lower:
                 return RoomType.BEDROOM
-        
+
         for keyword in cls.LIVING_KEYWORDS:
             if keyword in name_lower:
                 return RoomType.LIVING_ROOM
-        
+
         for keyword in cls.DINING_KEYWORDS:
             if keyword in name_lower:
                 return RoomType.DINING_ROOM
-        
+
+        for keyword in cls.LAUNDRY_KEYWORDS:
+            if keyword in name_lower:
+                return RoomType.LAUNDRY
+
         return RoomType.OTHER
 
 
@@ -459,6 +465,188 @@ class MaterialCalculator:
             "is_fixture": True,
             "category": "bathroom",
         },
+
+        # ==================== ELECTRICAL ====================
+        "electrical_outlet": {
+            "name": "Electrical Outlet (Duplex)",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "electrical",
+        },
+        "electrical_gfi_outlet": {
+            "name": "GFI Outlet",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "electrical",
+        },
+        "electrical_switch": {
+            "name": "Light Switch",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "electrical",
+        },
+        "electrical_light_fixture": {
+            "name": "Light Fixture",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "electrical",
+        },
+        "electrical_wire_run": {
+            "name": "Electrical Wire (NM Cable)",
+            "coverage_per_unit": 0.3048,  # m per linear ft
+            "unit": "linear ft",
+            "waste_factor": 0.0,
+            "is_linear": True,
+            "category": "electrical",
+        },
+        "electrical_breaker_panel": {
+            "name": "Breaker Panel",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "electrical",
+        },
+
+        # ==================== PLUMBING ====================
+        "plumbing_supply_line": {
+            "name": "Supply Line Rough-in",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "plumbing",
+        },
+        "plumbing_drain_line": {
+            "name": "Drain Line Rough-in",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "plumbing",
+        },
+        "plumbing_vent_stack": {
+            "name": "Vent Stack",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "plumbing",
+        },
+        "plumbing_water_heater": {
+            "name": "Water Heater",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "plumbing",
+        },
+        "plumbing_shutoff_valve": {
+            "name": "Shut-off Valve",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "plumbing",
+        },
+
+        # ==================== APPLIANCES ====================
+        "appliance_range": {
+            "name": "Range/Oven",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "appliances",
+        },
+        "appliance_dishwasher": {
+            "name": "Dishwasher",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "appliances",
+        },
+        "appliance_microwave_hood": {
+            "name": "Microwave/Range Hood",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "appliances",
+        },
+        "appliance_refrigerator": {
+            "name": "Refrigerator",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "appliances",
+        },
+        "appliance_washer": {
+            "name": "Washer",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "appliances",
+        },
+        "appliance_dryer": {
+            "name": "Dryer",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "appliances",
+        },
+
+        # ==================== DEMO/REMOVAL (always calculated, shown in remodel mode) ====================
+        "demo_cabinet_removal": {
+            "name": "Cabinet Removal",
+            "coverage_per_unit": 0.3048,  # m per linear ft
+            "unit": "linear ft",
+            "waste_factor": 0.0,
+            "is_linear": True,
+            "category": "demo",
+        },
+        "demo_flooring_removal": {
+            "name": "Flooring Removal",
+            "coverage_per_unit": 0.0929,  # m² per sq ft
+            "unit": "sq ft",
+            "waste_factor": 0.0,
+            "category": "demo",
+        },
+        "demo_drywall_removal": {
+            "name": "Drywall Removal",
+            "coverage_per_unit": 0.0929,  # m² per sq ft
+            "unit": "sq ft",
+            "waste_factor": 0.0,
+            "category": "demo",
+        },
+        "demo_fixture_removal": {
+            "name": "Fixture Removal",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "demo",
+        },
+        "demo_haul_away": {
+            "name": "Haul-away / Dumpster",
+            "coverage_per_unit": 1,
+            "unit": "unit",
+            "waste_factor": 0.0,
+            "is_fixture": True,
+            "category": "demo",
+        },
     }
     
     def __init__(self, ceiling_height_m: float = 2.4):
@@ -516,9 +704,14 @@ class MaterialCalculator:
         # Detect room type
         room_name = room_data.get('name', '')
         room_type = RoomTypeDetector.detect(room_name)
-        
+
         results = {}
-        
+
+        # Pre-compute values used across multiple sections
+        floor_area_sqft = floor_area_m2 * 10.7639
+        is_full_bath = room_type == RoomType.BATHROOM and floor_area_m2 > 4.0
+        is_large_bath = room_type == RoomType.BATHROOM and floor_area_m2 > 7.0
+
         # ==================== GENERAL MATERIALS (all rooms) ====================
         
         # Calculate flooring options
@@ -579,10 +772,6 @@ class MaterialCalculator:
         
         # ==================== BATHROOM-SPECIFIC MATERIALS ====================
         if room_type == RoomType.BATHROOM:
-            # Determine bathroom type based on size
-            is_full_bath = floor_area_m2 > 4.0  # > ~43 sq ft
-            is_large_bath = floor_area_m2 > 7.0  # > ~75 sq ft
-            
             # Vanity (1 per bathroom)
             results['vanity_cabinet'] = self._calculate_fixture('vanity_cabinet', 1, room_type.value)
             results['bathroom_faucet'] = self._calculate_fixture('bathroom_faucet', 1, room_type.value)
@@ -609,8 +798,72 @@ class MaterialCalculator:
                     # Standard full bath - tub/shower combo
                     results['bathtub'] = self._calculate_fixture('bathtub', 1, room_type.value)
         
+        # ==================== ELECTRICAL (all rooms) ====================
+        outlet_counts = {
+            RoomType.KITCHEN: 10, RoomType.BATHROOM: 3, RoomType.BEDROOM: 5,
+            RoomType.LIVING_ROOM: 7, RoomType.DINING_ROOM: 4, RoomType.LAUNDRY: 4,
+        }
+        gfi_counts = {
+            RoomType.KITCHEN: 4, RoomType.BATHROOM: 2, RoomType.LAUNDRY: 2,
+        }
+        outlet_count = outlet_counts.get(room_type, 4)
+        gfi_count = gfi_counts.get(room_type, 0)
+        switch_count = 2 if floor_area_sqft > 200 else 1
+        light_fixture_count = 2 if floor_area_sqft > 200 else 1
+
+        results['electrical_outlet'] = self._calculate_fixture('electrical_outlet', outlet_count, room_type.value)
+        if gfi_count > 0:
+            results['electrical_gfi_outlet'] = self._calculate_fixture('electrical_gfi_outlet', gfi_count, room_type.value)
+        results['electrical_switch'] = self._calculate_fixture('electrical_switch', switch_count, room_type.value)
+        results['electrical_light_fixture'] = self._calculate_fixture('electrical_light_fixture', light_fixture_count, room_type.value)
+        # Wire run: perimeter × 1.5 multiplier for routing complexity
+        wire_run_m = perimeter_m * 1.5
+        results['electrical_wire_run'] = self._calculate_linear_material('electrical_wire_run', wire_run_m, room_type.value)
+
+        # ==================== PLUMBING (wet rooms only) ====================
+        plumbing_fixture_count = 0
+        if room_type == RoomType.KITCHEN:
+            plumbing_fixture_count = 1  # kitchen sink
+        elif room_type == RoomType.BATHROOM:
+            plumbing_fixture_count = 2  # vanity + toilet
+            if is_full_bath:
+                plumbing_fixture_count += 1  # tub or shower
+            if is_large_bath:
+                plumbing_fixture_count += 1  # separate shower + tub
+        elif room_type == RoomType.LAUNDRY:
+            plumbing_fixture_count = 1  # washer hookup
+
+        if plumbing_fixture_count > 0:
+            results['plumbing_supply_line'] = self._calculate_fixture('plumbing_supply_line', plumbing_fixture_count, room_type.value)
+            results['plumbing_drain_line'] = self._calculate_fixture('plumbing_drain_line', plumbing_fixture_count, room_type.value)
+            results['plumbing_shutoff_valve'] = self._calculate_fixture('plumbing_shutoff_valve', plumbing_fixture_count * 2, room_type.value)
+            results['plumbing_vent_stack'] = self._calculate_fixture('plumbing_vent_stack', 1, room_type.value)
+
+        # ==================== APPLIANCES ====================
+        if room_type == RoomType.KITCHEN:
+            results['appliance_range'] = self._calculate_fixture('appliance_range', 1, room_type.value)
+            results['appliance_dishwasher'] = self._calculate_fixture('appliance_dishwasher', 1, room_type.value)
+            results['appliance_microwave_hood'] = self._calculate_fixture('appliance_microwave_hood', 1, room_type.value)
+            results['appliance_refrigerator'] = self._calculate_fixture('appliance_refrigerator', 1, room_type.value)
+        elif room_type == RoomType.LAUNDRY:
+            results['appliance_washer'] = self._calculate_fixture('appliance_washer', 1, room_type.value)
+            results['appliance_dryer'] = self._calculate_fixture('appliance_dryer', 1, room_type.value)
+
+        # ==================== DEMO/REMOVAL (always calculated; shown via remodel mode toggle) ====================
+        results['demo_flooring_removal'] = self._calculate_material('demo_flooring_removal', floor_area_m2, room_type.value)
+        results['demo_drywall_removal'] = self._calculate_material('demo_drywall_removal', wall_area_m2, room_type.value)
+        if room_type == RoomType.KITCHEN:
+            total_cabinet_run_m = perimeter_m * 0.60 + perimeter_m * 0.40
+            results['demo_cabinet_removal'] = self._calculate_linear_material('demo_cabinet_removal', total_cabinet_run_m, room_type.value)
+            results['demo_fixture_removal'] = self._calculate_fixture('demo_fixture_removal', 1, room_type.value)
+        elif room_type == RoomType.BATHROOM:
+            fixture_demo_count = 2  # vanity + toilet
+            if is_full_bath:
+                fixture_demo_count += 1  # tub or shower
+            results['demo_fixture_removal'] = self._calculate_fixture('demo_fixture_removal', fixture_demo_count, room_type.value)
+
         return results
-    
+
     def _calculate_material(self, material_type: str, area_m2: float, room_type: str = "") -> MaterialQuantity:
         """Calculate quantity for area-based materials."""
         spec = self.MATERIAL_SPECS[material_type]
@@ -680,21 +933,41 @@ class MaterialCalculator:
     def calculate_from_blueprint(self, blueprint_analysis: dict) -> Dict[str, Dict[str, MaterialQuantity]]:
         """
         Calculate material quantities for an entire blueprint.
-        
+
         Args:
             blueprint_analysis: Full analysis from BlueprintParser
-        
+
         Returns:
             Dictionary of room name to material quantities
         """
         results = {}
-        
+        has_electrical = False
+        has_plumbing = False
+        has_rooms = False
+
         for room in blueprint_analysis.get('rooms', []):
             room_name = room.get('name', 'Unknown Room')
             room_materials = self.calculate_from_room(room)
             if room_materials:
                 results[room_name] = room_materials
-        
+                has_rooms = True
+                if any(k.startswith('electrical_') for k in room_materials):
+                    has_electrical = True
+                if any(k.startswith('plumbing_') for k in room_materials):
+                    has_plumbing = True
+
+        # Project-level items: one per project regardless of room count
+        project_items: Dict[str, MaterialQuantity] = {}
+        if has_electrical:
+            project_items['electrical_breaker_panel'] = self._calculate_fixture('electrical_breaker_panel', 1, 'project')
+        if has_plumbing:
+            project_items['plumbing_water_heater'] = self._calculate_fixture('plumbing_water_heater', 1, 'project')
+        if has_rooms:
+            project_items['demo_haul_away'] = self._calculate_fixture('demo_haul_away', 1, 'project')
+
+        if project_items:
+            results['__project_level__'] = project_items
+
         return results
     
     def get_totals(self, room_materials: Dict[str, Dict[str, MaterialQuantity]]) -> Dict[str, MaterialQuantity]:

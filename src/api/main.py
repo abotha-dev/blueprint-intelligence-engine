@@ -216,6 +216,23 @@ class MEPBreakdownResponse(BaseModel):
     includes: List[str]
 
 
+class DemoLineItemResponse(BaseModel):
+    material_type: str
+    display_name: str
+    units_needed: int
+    unit: str
+    material_cost: float
+    labor_cost: float
+    total_cost: float
+    price_per_unit: float
+
+
+class DemoBreakdownResponse(BaseModel):
+    line_items: List[DemoLineItemResponse]
+    subtotal: float
+    disclaimer: str
+
+
 class ProjectEstimateResponse(BaseModel):
     project_name: str
     timestamp: str
@@ -228,6 +245,7 @@ class ProjectEstimateResponse(BaseModel):
     total_estimate: float
     notes: List[str]
     mep_breakdown: Optional[MEPBreakdownResponse] = None
+    demo_breakdown: Optional[DemoBreakdownResponse] = None
 
 
 class QualityComparisonResponse(BaseModel):
@@ -676,11 +694,32 @@ async def full_analysis(
                     **estimate.mep_breakdown,
                     "mep_estimate": round(float(estimate.mep_breakdown["mep_estimate"]) * location_multiplier, 2),
                 }
-            
+
+            adjusted_demo_breakdown = None
+            if estimate.demo_breakdown:
+                adjusted_line_items = [
+                    DemoLineItemResponse(
+                        material_type=item["material_type"],
+                        display_name=item["display_name"],
+                        units_needed=item["units_needed"],
+                        unit=item["unit"],
+                        material_cost=round(item["material_cost"] * location_multiplier, 2),
+                        labor_cost=round(item["labor_cost"] * location_multiplier, 2),
+                        total_cost=round(item["total_cost"] * location_multiplier, 2),
+                        price_per_unit=round(item["price_per_unit"] * location_multiplier, 2),
+                    )
+                    for item in estimate.demo_breakdown["line_items"]
+                ]
+                adjusted_demo_breakdown = DemoBreakdownResponse(
+                    line_items=adjusted_line_items,
+                    subtotal=round(estimate.demo_breakdown["subtotal"] * location_multiplier, 2),
+                    disclaimer=estimate.demo_breakdown["disclaimer"],
+                )
+
             # Update region display to show location name
             # Priority: zipcode location > state location > original region
             region_display = location_name
-            
+
             cost_estimate = ProjectEstimateResponse(
                 project_name=estimate.project_name,
                 timestamp=estimate.timestamp,
@@ -692,7 +731,8 @@ async def full_analysis(
                 contingency_amount=adjusted_contingency_amount,
                 total_estimate=adjusted_total_estimate,
                 notes=estimate.notes,
-                mep_breakdown=adjusted_mep_breakdown
+                mep_breakdown=adjusted_mep_breakdown,
+                demo_breakdown=adjusted_demo_breakdown,
             )
             
             # Step 4: Structural estimates (framing, foundation, roofing)
